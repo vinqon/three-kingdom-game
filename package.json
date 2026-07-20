@@ -1,0 +1,11 @@
+{
+  "name": "three-kingdoms-h5",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node --no-warnings scripts/build.mjs",
+    "test": "node --no-warnings --experimental-strip-types --test src/game/*.test.ts src/app-contract.test.mjs",
+    "dev": "node --no-warnings scripts/build.mjs && node scripts/serve.mjs"
+  }
+}
