@@ -3,7 +3,6 @@ import React from './vendor/react/esm-index-production.js';
 const h = React.createElement;
 
 const FACTION_MARKS = { wei: '魏', shu: '蜀', wu: '吴' };
-const MAP_SIZE_LABELS = { 12: '十二城', 21: '二十一城', 33: '三十三城' };
 
 function routePairs(state) {
   return Object.values(state.cities).flatMap((city) =>
@@ -49,16 +48,12 @@ export function StrategyMap({
         ? `增援完成 · ${playback.afterTargetTroops}兵`
         : '';
   const reinforcing = new Set(reinforcingCityIds);
-  const mapSize = state.scenario.mapSize;
-  const nodeScale = mapSize === 33 ? 0.62 : mapSize === 21 ? 0.78 : 1;
-  const hitRadius = mapSize === 33 ? 42 : mapSize === 21 ? 50 : 60;
 
   return h(
     'div',
     {
-            className: [
-              'map-frame',
-              `map-size-${state.scenario.mapSize}`,
+      className: [
+        'map-frame',
         playback ? 'playback-active' : '',
         playback ? `playback-${playback.mode}` : '',
         reinforcingFaction ? 'reinforcement-active' : '',
@@ -90,18 +85,13 @@ export function StrategyMap({
       h('span', null, `${playback.originName} → ${playback.targetName} · ${playback.command.troops}兵`),
       playback.phase === 'resolve' && h('b', null, outcomeCopy),
     ),
-    mapSize === 33 && h(
-      'div',
-      { className: 'map-pan-hint', 'aria-hidden': 'true' },
-      '滑动地图查看全部城市',
-    ),
     h(
       'svg',
       {
         className: 'strategy-map',
         viewBox: '0 0 1000 680',
         role: 'region',
-        'aria-label': `三国${MAP_SIZE_LABELS[mapSize]}战略地图`,
+        'aria-label': '三国十二城战略地图',
         'data-testid': 'game-map',
       },
       h('image', {
@@ -128,7 +118,7 @@ export function StrategyMap({
             y1: from.position.y,
             x2: to.position.x,
             y2: to.position.y,
-            className: `map-route${from.originalOwner !== to.originalOwner ? ' border-route' : ''}${isLegal ? ' legal-route' : ''}${isActive ? ' active-route' : ''}`,
+            className: `map-route${from.owner !== to.owner ? ' border-route' : ''}${isLegal ? ' legal-route' : ''}${isActive ? ' active-route' : ''}`,
             'data-route': `${from.id}-${to.id}`,
           });
         }),
@@ -176,26 +166,22 @@ export function StrategyMap({
                 }
               },
             },
-            h('circle', { className: 'city-hit-area', r: hitRadius }),
-            h(
-              'g',
-              { className: 'city-visual', transform: `scale(${nodeScale})`, 'aria-hidden': 'true' },
-              city.capitalOf && h('circle', { className: 'capital-ring', r: 42 }),
-              isLegal && h('circle', { className: 'legal-ring', r: 39 }),
-              h('circle', { className: 'city-disc', r: 31 }),
-              h('text', { className: 'troop-count', x: 0, y: 7 }, city.troops),
-              h('text', { className: 'city-label', x: 0, y: 57 }, city.name),
-              h('text', { className: 'faction-mark', x: 22, y: -21 }, FACTION_MARKS[city.owner]),
-              isPlaybackOrigin && playback.phase !== 'announce' && h(
-                'text',
-                { className: 'city-delta', x: 0, y: -51 },
-                `−${playback.command.troops}`,
-              ),
-              isPlaybackTarget && playback.phase === 'resolve' && h(
-                'text',
-                { className: 'city-delta target-delta', x: 0, y: -51 },
-                playback.outcome === 'captured' ? '攻占' : playback.outcome === 'held' ? '守住' : `+${playback.command.troops}`,
-              ),
+            h('circle', { className: 'city-hit-area', r: 60 }),
+            city.capitalOf && h('circle', { className: 'capital-ring', r: 42 }),
+            isLegal && h('circle', { className: 'legal-ring', r: 39 }),
+            h('circle', { className: 'city-disc', r: 31 }),
+            h('text', { className: 'troop-count', x: 0, y: 7 }, city.troops),
+            h('text', { className: 'city-label', x: 0, y: 57 }, city.name),
+            h('text', { className: 'faction-mark', x: 22, y: -21 }, FACTION_MARKS[city.owner]),
+            isPlaybackOrigin && playback.phase !== 'announce' && h(
+              'text',
+              { className: 'city-delta', x: 0, y: -51 },
+              `−${playback.command.troops}`,
+            ),
+            isPlaybackTarget && playback.phase === 'resolve' && h(
+              'text',
+              { className: 'city-delta target-delta', x: 0, y: -51 },
+              playback.outcome === 'captured' ? '攻占' : playback.outcome === 'held' ? '守住' : `+${playback.command.troops}`,
             ),
           );
         }),
@@ -224,8 +210,6 @@ export function StrategyMap({
       h('span', null, h('i', { className: 'legend-dot faction-shu' }), '蜀'),
       h('span', null, h('i', { className: 'legend-dot faction-wu' }), '吴'),
       h('span', null, h('i', { className: 'legend-capital' }), '首都'),
-      h('span', null, h('i', { className: 'legend-route domestic' }), '国内实线'),
-      h('span', null, h('i', { className: 'legend-route border' }), '跨国虚线'),
     ),
   );
 }
