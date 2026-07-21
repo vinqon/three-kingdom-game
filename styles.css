@@ -172,6 +172,71 @@ button:disabled {
   line-height: 1.8;
 }
 
+.map-size-grid,
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 auto 24px;
+}
+
+.setup-section {
+  margin-top: 28px;
+}
+
+.faction-select-card > .section-title {
+  margin-top: 30px;
+}
+
+.faction-select-card > .section-title:first-of-type {
+  margin-top: 22px;
+}
+
+.setup-section .section-title,
+.faction-select-card > .section-title {
+  margin-bottom: 12px;
+}
+
+.setup-option-grid {
+  margin-bottom: 0;
+}
+
+.map-size-button,
+.difficulty-button {
+  display: flex;
+  min-height: 86px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(232, 216, 176, 0.22);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(8, 19, 14, 0.28);
+  color: #efe4ce;
+  cursor: pointer;
+}
+
+.map-size-button:hover,
+.map-size-button.selected,
+.difficulty-button:hover,
+.difficulty-button.selected {
+  border-color: var(--gold);
+  background: rgba(49, 65, 57, 0.82);
+}
+
+.map-size-button strong,
+.difficulty-button strong {
+  color: #fff4d8;
+  font-size: 17px;
+}
+
+.map-size-button small,
+.difficulty-button small {
+  color: #c8c0ae;
+  font-size: 12px;
+}
+
 .rule-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -217,7 +282,7 @@ button:disabled {
 }
 
 .screen-intro {
-  margin: 12px 0 28px;
+  margin: 12px 0 22px;
   color: #c8c0ae;
 }
 
@@ -225,6 +290,7 @@ button:disabled {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+  margin-top: 12px;
 }
 
 .faction-card {
@@ -464,7 +530,10 @@ button:disabled {
   overflow: hidden;
   border: 1px solid rgba(245, 225, 176, 0.35);
   border-radius: 14px;
-  background: #bba57a;
+  background-color: #bba57a;
+  background-image: linear-gradient(rgba(217, 198, 153, 0.68), rgba(217, 198, 153, 0.68)), url("./assets/three-kingdoms-terrain.png");
+  background-position: center;
+  background-size: cover;
   box-shadow: inset 0 0 60px rgba(62, 44, 25, 0.22), 0 12px 28px rgba(9, 22, 15, 0.22);
 }
 
@@ -1337,6 +1406,16 @@ button:disabled {
 
   .rule-summary {
     grid-template-columns: 1fr;
+  }
+
+  .map-size-grid,
+  .difficulty-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-size-button,
+  .difficulty-button {
+    min-height: 62px;
   }
 
   .rule-summary span {
