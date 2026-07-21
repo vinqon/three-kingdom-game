@@ -27,6 +27,15 @@ describe('lightweight browser game contract', () => {
       assert.match(appSource, new RegExp(`['"]${testId}['"]`), testId);
     }
     assert.match(appSource, /`faction-\$\{id\}`/);
+    assert.match(appSource, /count:\s*12/);
+    assert.match(appSource, /count:\s*18/);
+    assert.match(appSource, /count:\s*24/);
+    assert.match(appSource, /`map-size-\$\{size\.count\}`/);
+    assert.match(appSource, /id:\s*['"]easy['"]/);
+    assert.match(appSource, /id:\s*['"]medium['"]/);
+    assert.match(appSource, /id:\s*['"]hard['"]/);
+    assert.match(appSource, /`difficulty-\$\{difficulty\.id\}`/);
+    assert.match(appSource, /createLiteScenario\(initialFaction,\s*cityCount,\s*difficulty\)/);
     assert.match(appSource, /wei:|shu:|wu:/);
     assert.match(mapSource, /['"]game-map['"]/);
     assert.match(mapSource, /`city-\$\{city\.id\}`/);
