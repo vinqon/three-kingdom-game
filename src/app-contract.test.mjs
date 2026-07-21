@@ -6,22 +6,12 @@ const appSource = await readFile(new URL('../public/app.js', import.meta.url), '
 const mapSource = await readFile(new URL('../public/map-canvas.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../public/styles.css', import.meta.url), 'utf8');
-const scenarioSource = await readFile(new URL('./game/scenario.ts', import.meta.url), 'utf8');
 
 describe('lightweight browser game contract', () => {
-  it('uses explicit grouped route plans without legacy route splitting', () => {
-    assert.doesNotMatch(
-      scenarioSource,
-      /ROUTE_CLEARANCE|ROUTE_ENDPOINT_MARGIN|splitRouteAtBlockingCities|splitRoutesUntilClear/,
-    );
-    assert.match(scenarioSource, /ROUTES_BY_SIZE/);
-    assert.doesNotMatch(scenarioSource, /DEGREE_LIMIT_BY_DENSITY|buildSparsePath/);
-  });
-
   it('exposes the complete lightweight interaction path', () => {
     const appTestIds = [
       'start-game',
-      'confirm-setup',
+      'confirm-faction',
       'mode-transfer',
       'mode-attack',
       'troop-stepper',
@@ -42,23 +32,6 @@ describe('lightweight browser game contract', () => {
     assert.match(mapSource, /`city-\$\{city\.id\}`/);
   });
 
-  it('offers deterministic campaign size and difficulty options before starting', () => {
-    for (const testId of [
-      'map-size-12', 'map-size-21', 'map-size-33',
-      'difficulty-easy', 'difficulty-normal', 'difficulty-hard',
-    ]) {
-      assert.match(appSource, new RegExp(`['"]${testId}['"]`), testId);
-    }
-    assert.doesNotMatch(appSource, /route-density-sparse|route-density-standard|route-density-dense/);
-    assert.match(appSource, /城池规模/);
-    assert.doesNotMatch(appSource, /连接方式/);
-    assert.match(appSource, /难易程度/);
-    assert.match(appSource, /mapSize:\s*33/);
-    assert.match(appSource, /routeDensity:\s*['"]standard['"]/);
-    assert.match(appSource, /difficulty:\s*['"]easy['"]/);
-    assert.match(appSource, /createLiteScenario\(options\)/);
-  });
-
   it('uses one responsive SVG graph for roads and city markers', () => {
     assert.match(mapSource, /h\(\s*['"]svg['"]/);
     assert.match(mapSource, /h\(\s*['"]line['"]/);
@@ -69,25 +42,6 @@ describe('lightweight browser game contract', () => {
     assert.doesNotMatch(mapSource, /geoPoint|longitude|latitude|getContext\(['"]2d/);
     assert.match(mapSource, /role: ['"]region['"]/);
     assert.match(mapSource, /className: ['"]city-hit-area['"]/);
-  });
-
-  it('keeps domestic roads solid and original cross-country roads dashed', () => {
-    assert.match(mapSource, /from\.originalOwner !== to\.originalOwner/);
-    assert.doesNotMatch(mapSource, /from\.owner !== to\.owner/);
-    assert.match(mapSource, /国内实线/);
-    assert.match(mapSource, /跨国虚线/);
-    assert.match(mapSource, /map-size-\$\{state\.scenario\.mapSize\}/);
-    assert.match(styles, /\.map-route\.border-route[\s\S]*stroke-dasharray/);
-    assert.match(styles, /\.map-size-33/);
-  });
-
-  it('keeps the 33-city map pannable and touch-readable on phones', () => {
-    assert.match(mapSource, /map-pan-hint/);
-    assert.match(mapSource, /滑动地图查看全部城市/);
-    assert.match(styles, /@media \(max-width: 620px\)[\s\S]*\.map-frame\.map-size-33[\s\S]*overflow:\s*auto/);
-    assert.match(styles, /\.map-size-33 \.strategy-map[\s\S]*width:\s*900px/);
-    assert.match(styles, /\.map-size-33 \.strategy-map[\s\S]*height:\s*612px/);
-    assert.match(styles, /touch-action:\s*pan-x pan-y/);
   });
 
   it('plays AI actions one at a time and announces battle log updates', () => {

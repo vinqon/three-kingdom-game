@@ -1,12 +1,4 @@
-import type {
-  CityState,
-  Difficulty,
-  FactionId,
-  GameState,
-  MapSize,
-  RouteDensity,
-  ScenarioOptions,
-} from './types.ts';
+import type { CityState, FactionId, GameState } from './types.ts';
 
 export interface CityDefinition {
   id: string;
@@ -16,207 +8,66 @@ export interface CityDefinition {
   position: { x: number; y: number };
 }
 
-type Route = [string, string];
-
 export const FACTION_ORDER: FactionId[] = ['wei', 'shu', 'wu'];
 
 export const CITY_DEFINITIONS: CityDefinition[] = [
-  { id: 'xuchang', name: '许昌', owner: 'wei', capitalOf: 'wei', position: { x: 420, y: 150 } },
-  { id: 'wan', name: '宛城', owner: 'wei', position: { x: 370, y: 285 } },
-  { id: 'xiangyang', name: '襄阳', owner: 'wei', position: { x: 500, y: 345 } },
-  { id: 'hefei', name: '合肥', owner: 'wei', position: { x: 720, y: 320 } },
-  { id: 'luoyang', name: '洛阳', owner: 'wei', position: { x: 210, y: 125 } },
-  { id: 'shouchun', name: '寿春', owner: 'wei', position: { x: 610, y: 260 } },
-  { id: 'xinye', name: '新野', owner: 'wei', position: { x: 280, y: 280 } },
-  { id: 'ye', name: '邺城', owner: 'wei', position: { x: 350, y: 45 } },
-  { id: 'chenliu', name: '陈留', owner: 'wei', position: { x: 700, y: 55 } },
-  { id: 'puyang', name: '濮阳', owner: 'wei', position: { x: 540, y: 120 } },
-  { id: 'xuzhou', name: '徐州', owner: 'wei', position: { x: 875, y: 130 } },
+  { id: 'xuchang', name: '许昌', owner: 'wei', capitalOf: 'wei', position: { x: 190, y: 90 } },
+  { id: 'wan', name: '宛城', owner: 'wei', position: { x: 315, y: 205 } },
+  { id: 'xiangyang', name: '襄阳', owner: 'wei', position: { x: 455, y: 315 } },
+  { id: 'hefei', name: '合肥', owner: 'wei', position: { x: 575, y: 160 } },
 
-  { id: 'chengdu', name: '成都', owner: 'shu', capitalOf: 'shu', position: { x: 120, y: 455 } },
-  { id: 'hanzhong', name: '汉中', owner: 'shu', position: { x: 200, y: 275 } },
-  { id: 'yongan', name: '永安', owner: 'shu', position: { x: 300, y: 440 } },
-  { id: 'jiangling', name: '江陵', owner: 'shu', position: { x: 395, y: 425 } },
-  { id: 'zitong', name: '梓潼', owner: 'shu', position: { x: 80, y: 350 } },
-  { id: 'jiangzhou', name: '江州', owner: 'shu', position: { x: 180, y: 500 } },
-  { id: 'wuling', name: '武陵', owner: 'shu', position: { x: 420, y: 630 } },
-  { id: 'lingling', name: '零陵', owner: 'shu', position: { x: 555, y: 625 } },
-  { id: 'guiyang', name: '桂阳', owner: 'shu', position: { x: 610, y: 520 } },
-  { id: 'jianning', name: '建宁', owner: 'shu', position: { x: 145, y: 630 } },
-  { id: 'yongchang', name: '永昌', owner: 'shu', position: { x: 60, y: 560 } },
+  { id: 'chengdu', name: '成都', owner: 'shu', capitalOf: 'shu', position: { x: 115, y: 585 } },
+  { id: 'hanzhong', name: '汉中', owner: 'shu', position: { x: 245, y: 415 } },
+  { id: 'yongan', name: '永安', owner: 'shu', position: { x: 335, y: 575 } },
+  { id: 'jiangling', name: '江陵', owner: 'shu', position: { x: 475, y: 455 } },
 
-  { id: 'jianye', name: '建业', owner: 'wu', capitalOf: 'wu', position: { x: 850, y: 545 } },
-  { id: 'lujiang', name: '庐江', owner: 'wu', position: { x: 690, y: 400 } },
-  { id: 'chaisang', name: '柴桑', owner: 'wu', position: { x: 570, y: 390 } },
-  { id: 'changsha', name: '长沙', owner: 'wu', position: { x: 500, y: 500 } },
-  { id: 'wuchang', name: '武昌', owner: 'wu', position: { x: 770, y: 440 } },
-  { id: 'yuzhang', name: '豫章', owner: 'wu', position: { x: 760, y: 535 } },
-  { id: 'danyang', name: '丹阳', owner: 'wu', position: { x: 940, y: 220 } },
-  { id: 'wu', name: '吴郡', owner: 'wu', position: { x: 930, y: 300 } },
-  { id: 'kuaiji', name: '会稽', owner: 'wu', position: { x: 870, y: 450 } },
-  { id: 'jianan', name: '建安', owner: 'wu', position: { x: 930, y: 630 } },
-  { id: 'jiaozhi', name: '交趾', owner: 'wu', position: { x: 650, y: 610 } },
+  { id: 'jianye', name: '建业', owner: 'wu', capitalOf: 'wu', position: { x: 890, y: 575 } },
+  { id: 'lujiang', name: '庐江', owner: 'wu', position: { x: 750, y: 245 } },
+  { id: 'chaisang', name: '柴桑', owner: 'wu', position: { x: 710, y: 445 } },
+  { id: 'changsha', name: '长沙', owner: 'wu', position: { x: 600, y: 570 } },
 ];
 
-const CITY_BY_ID = new Map(CITY_DEFINITIONS.map((city) => [city.id, city]));
+export const ROUTES: [string, string][] = [
+  ['xuchang', 'wan'],
+  ['xuchang', 'hefei'],
+  ['wan', 'xiangyang'],
+  ['hefei', 'xiangyang'],
 
-const CITY_ORDERS: Record<MapSize, Record<FactionId, string[]>> = {
-  12: {
-    wei: ['xuchang', 'wan', 'xiangyang', 'hefei'],
-    shu: ['chengdu', 'hanzhong', 'jiangling', 'yongan'],
-    wu: ['jianye', 'lujiang', 'changsha', 'chaisang'],
-  },
-  21: {
-    wei: ['xuchang', 'luoyang', 'wan', 'xiangyang', 'shouchun', 'hefei', 'xuzhou'],
-    shu: ['chengdu', 'zitong', 'hanzhong', 'jiangling', 'yongan', 'wuling', 'jiangzhou'],
-    wu: ['jianye', 'danyang', 'lujiang', 'wuchang', 'changsha', 'chaisang', 'yuzhang'],
-  },
-  33: {
-    wei: ['xuchang', 'luoyang', 'ye', 'puyang', 'chenliu', 'xuzhou', 'hefei', 'shouchun', 'xiangyang', 'wan', 'xinye'],
-    shu: ['chengdu', 'zitong', 'hanzhong', 'jiangling', 'yongan', 'jiangzhou', 'jianning', 'yongchang', 'wuling', 'lingling', 'guiyang'],
-    wu: ['jianye', 'jianan', 'jiaozhi', 'changsha', 'chaisang', 'yuzhang', 'wuchang', 'lujiang', 'danyang', 'wu', 'kuaiji'],
-  },
-};
+  ['chengdu', 'hanzhong'],
+  ['chengdu', 'yongan'],
+  ['hanzhong', 'jiangling'],
+  ['yongan', 'jiangling'],
 
-const ROUTES_BY_SIZE: Record<MapSize, Route[]> = {
-  12: [
-    ['xuchang', 'wan'],
-    ['wan', 'xiangyang'],
-    ['xiangyang', 'hefei'],
-    ['chengdu', 'hanzhong'],
-    ['hanzhong', 'jiangling'],
-    ['jiangling', 'yongan'],
-    ['jianye', 'lujiang'],
-    ['lujiang', 'chaisang'],
-    ['chaisang', 'changsha'],
-    ['wan', 'hanzhong'],
-    ['xiangyang', 'jiangling'],
-    ['hefei', 'lujiang'],
-  ],
-  21: [
-    ['luoyang', 'xuchang'],
-    ['xuchang', 'wan'],
-    ['wan', 'xiangyang'],
-    ['xiangyang', 'shouchun'],
-    ['shouchun', 'hefei'],
-    ['hefei', 'xuzhou'],
-    ['chengdu', 'zitong'],
-    ['zitong', 'hanzhong'],
-    ['hanzhong', 'jiangling'],
-    ['jiangling', 'yongan'],
-    ['yongan', 'jiangzhou'],
-    ['yongan', 'wuling'],
-    ['jianye', 'yuzhang'],
-    ['yuzhang', 'wuchang'],
-    ['wuchang', 'lujiang'],
-    ['lujiang', 'danyang'],
-    ['lujiang', 'chaisang'],
-    ['chaisang', 'changsha'],
-    ['wan', 'hanzhong'],
-    ['xiangyang', 'jiangling'],
-    ['hefei', 'lujiang'],
-  ],
-  33: [
-    ['luoyang', 'ye'],
-    ['ye', 'xuchang'],
-    ['xuchang', 'puyang'],
-    ['puyang', 'chenliu'],
-    ['chenliu', 'xuzhou'],
-    ['xuzhou', 'hefei'],
-    ['hefei', 'shouchun'],
-    ['shouchun', 'xiangyang'],
-    ['xiangyang', 'wan'],
-    ['wan', 'xinye'],
-    ['chengdu', 'zitong'],
-    ['zitong', 'hanzhong'],
-    ['hanzhong', 'jiangling'],
-    ['jiangling', 'yongan'],
-    ['yongan', 'jiangzhou'],
-    ['jiangzhou', 'jianning'],
-    ['jianning', 'yongchang'],
-    ['yongan', 'wuling'],
-    ['wuling', 'lingling'],
-    ['lingling', 'guiyang'],
-    ['jianye', 'yuzhang'],
-    ['yuzhang', 'wuchang'],
-    ['wuchang', 'lujiang'],
-    ['lujiang', 'chaisang'],
-    ['chaisang', 'changsha'],
-    ['changsha', 'jiaozhi'],
-    ['jiaozhi', 'jianan'],
-    ['jianan', 'kuaiji'],
-    ['kuaiji', 'wu'],
-    ['wu', 'danyang'],
-    ['xinye', 'hanzhong'],
-    ['xiangyang', 'jiangling'],
-    ['hefei', 'lujiang'],
-    ['guiyang', 'changsha'],
-  ],
-};
+  ['jianye', 'lujiang'],
+  ['jianye', 'chaisang'],
+  ['lujiang', 'changsha'],
+  ['chaisang', 'changsha'],
 
-function routeKey([left, right]: Route): string {
-  return [left, right].sort().join('~');
-}
+  ['wan', 'hanzhong'],
+  ['xiangyang', 'jiangling'],
+  ['hefei', 'lujiang'],
+  ['xiangyang', 'chaisang'],
+  ['yongan', 'chaisang'],
+  ['jiangling', 'changsha'],
+];
 
-export function routesForScenario(mapSize: MapSize, _density: RouteDensity = 'standard'): Route[] {
-  const activeIds = new Set(FACTION_ORDER.flatMap((faction) => CITY_ORDERS[mapSize][faction]));
-  const routes: Route[] = [];
-  const seen = new Set<string>();
-  for (const [left, right] of ROUTES_BY_SIZE[mapSize]) {
-    if (!activeIds.has(left) || !activeIds.has(right)) continue;
-    const key = routeKey([left, right]);
-    if (seen.has(key)) continue;
-    routes.push([left, right]);
-    seen.add(key);
-  }
-  return routes;
-}
-
-export const ROUTES: Route[] = routesForScenario(12, 'standard');
-
-function normalizeOptions(input: FactionId | ScenarioOptions): ScenarioOptions {
-  if (typeof input === 'string') {
-    return {
-      playerFaction: input,
-      mapSize: 12,
-      routeDensity: 'standard',
-      difficulty: 'easy',
-    };
-  }
-  return input;
-}
-
-function playerStartingTroops(difficulty: Difficulty, isCapital: boolean): number {
-  if (difficulty === 'normal') return isCapital ? 4 : 2;
-  if (difficulty === 'hard') return isCapital ? 3 : 1;
-  return isCapital ? 5 : 3;
-}
-
-export function createLiteScenario(input: FactionId | ScenarioOptions): GameState {
-  const options = normalizeOptions(input);
-  const activeIds = new Set(FACTION_ORDER.flatMap((faction) => CITY_ORDERS[options.mapSize][faction]));
+export function createLiteScenario(playerFaction: FactionId): GameState {
   const cities: Record<string, CityState> = {};
 
   for (const definition of CITY_DEFINITIONS) {
-    if (!activeIds.has(definition.id)) continue;
-    const isCapital = Boolean(definition.capitalOf);
-    const isPlayerCity = definition.owner === options.playerFaction;
     cities[definition.id] = {
       id: definition.id,
       name: definition.name,
       originalOwner: definition.owner,
       owner: definition.owner,
-      troops: isPlayerCity
-        ? playerStartingTroops(options.difficulty, isCapital)
-        : isCapital ? 5 : 3,
+      troops: definition.capitalOf ? 5 : 3,
       ...(definition.capitalOf ? { capitalOf: definition.capitalOf } : {}),
       adjacentCityIds: [],
       position: { ...definition.position },
     };
   }
 
-  for (const [left, right] of routesForScenario(options.mapSize, options.routeDensity)) {
-    if (!CITY_BY_ID.has(left) || !CITY_BY_ID.has(right)) continue;
+  for (const [left, right] of ROUTES) {
     cities[left].adjacentCityIds.push(right);
     cities[right].adjacentCityIds.push(left);
   }
@@ -224,13 +75,8 @@ export function createLiteScenario(input: FactionId | ScenarioOptions): GameStat
   return {
     version: 2,
     round: 1,
-    turnFaction: options.playerFaction,
-    playerFaction: options.playerFaction,
-    scenario: {
-      mapSize: options.mapSize,
-      routeDensity: options.routeDensity,
-      difficulty: options.difficulty,
-    },
+    turnFaction: playerFaction,
+    playerFaction,
     actionsRemaining: 0,
     cities,
     status: 'playing',

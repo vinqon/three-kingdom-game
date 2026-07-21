@@ -1,18 +1,5 @@
 export type FactionId = 'wei' | 'shu' | 'wu';
 
-export type MapSize = 12 | 21 | 33;
-
-export type RouteDensity = 'sparse' | 'standard' | 'dense';
-
-export type Difficulty = 'easy' | 'normal' | 'hard';
-
-export interface ScenarioOptions {
-  playerFaction: FactionId;
-  mapSize: MapSize;
-  routeDensity: RouteDensity;
-  difficulty: Difficulty;
-}
-
 export type GameStatus = 'playing' | 'victory' | 'defeat';
 
 export type ActionMode = 'transfer' | 'attack';
@@ -47,7 +34,6 @@ export interface GameState {
   round: number;
   turnFaction: FactionId;
   playerFaction: FactionId;
-  scenario: Omit<ScenarioOptions, 'playerFaction'>;
   actionsRemaining: number;
   cities: Record<string, CityState>;
   status: GameStatus;

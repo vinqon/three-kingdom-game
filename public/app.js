@@ -25,27 +25,6 @@ const FACTIONS = {
   wu: { name: '孙吴', short: '吴', capital: '建业', color: '#438365', trait: '东南连营，善于侧翼增援' },
 };
 
-const MAP_SIZE_OPTIONS = [
-  { value: 12, label: '12 城', detail: '短局 · 每国 4 城', testId: 'map-size-12' },
-  { value: 21, label: '21 城', detail: '中局 · 每国 7 城', testId: 'map-size-21' },
-  { value: 33, label: '33 城', detail: '大战 · 每国 11 城', testId: 'map-size-33' },
-];
-
-const DIFFICULTY_OPTIONS = [
-  { value: 'easy', label: '简单', detail: '玩家每城多 1 兵', testId: 'difficulty-easy' },
-  { value: 'normal', label: '中等', detail: '三方兵力相同', testId: 'difficulty-normal' },
-  { value: 'hard', label: '困难', detail: '玩家每城少 1 兵', testId: 'difficulty-hard' },
-];
-
-const DEFAULT_OPTIONS = {
-  playerFaction: 'wei',
-  mapSize: 33,
-  routeDensity: 'standard',
-  difficulty: 'easy',
-};
-
-const MAP_SIZE_NAMES = { 12: '十二城', 21: '二十一城', 33: '三十三城' };
-
 const ERROR_COPY = {
   CITY_NOT_FOUND: '没有找到这座城市。',
   GAME_OVER: '本局已经结束。',
@@ -80,7 +59,7 @@ function Welcome({ onStart }) {
       'section',
       { className: 'welcome-card' },
       h('p', { className: 'eyebrow' }, '轻量回合策略'),
-      h('h1', null, '三国', h('span', null, '逐鹿天下')),
+      h('h1', null, '三国', h('span', null, '十二城')),
       h('p', { className: 'welcome-lead' }, '集中兵力，穿过交错边境，同时夺取两座敌国首都。'),
       h(
         'div',
@@ -89,48 +68,22 @@ function Welcome({ onStart }) {
         h('span', null, h('b', null, '2'), '每回合 2 次行动'),
         h('span', null, h('b', null, '3'), '兵力相减定胜负'),
       ),
-      h('button', { className: 'primary-button start-button', 'data-testid': 'start-game', onClick: onStart }, '配置战局'),
+      h('button', { className: 'primary-button start-button', 'data-testid': 'start-game', onClick: onStart }, '选择势力'),
     ),
   );
 }
 
-function OptionGroup({ title, description, options, value, onChange }) {
-  return h(
-    'section',
-    { className: 'setup-group' },
-    h('div', { className: 'setup-group-heading' }, h('strong', null, title), h('small', null, description)),
-    h(
-      'div',
-      { className: 'option-grid' },
-      ...options.map((option) => h(
-        'button',
-        {
-          key: option.value,
-          className: `option-button${value === option.value ? ' selected' : ''}`,
-          'data-testid': option.testId,
-          'aria-pressed': value === option.value,
-          onClick: () => onChange(option.value),
-        },
-        h('strong', null, option.label),
-        h('small', null, option.detail),
-      )),
-    ),
-  );
-}
-
-function CampaignSetup({ onConfirm, onBack }) {
-  const [options, setOptions] = useState(DEFAULT_OPTIONS);
-  const update = (key, value) => setOptions((current) => ({ ...current, [key]: value }));
+function FactionSelect({ onConfirm, onBack }) {
+  const [selected, setSelected] = useState('wei');
   return h(
     'main',
-    { className: 'faction-screen setup-screen' },
+    { className: 'faction-screen' },
     h(
       'section',
-      { className: 'faction-select-card setup-card' },
-      h('p', { className: 'eyebrow' }, '配置战局'),
-      h('h1', null, '选择你的天下'),
-      h('p', { className: 'screen-intro' }, '相同选项每次都会生成相同地图，方便复盘。'),
-      h('div', { className: 'setup-section-title' }, h('strong', null, '选择势力'), h('small', null, '另外两国由电脑控制')),
+      { className: 'faction-select-card' },
+      h('p', { className: 'eyebrow' }, '选择你的势力'),
+      h('h1', null, '你将从哪一方起兵？'),
+      h('p', { className: 'screen-intro' }, '三方规则完全相同，只是首都和起始位置不同。'),
       h(
         'div',
         { className: 'faction-grid' },
@@ -139,10 +92,9 @@ function CampaignSetup({ onConfirm, onBack }) {
             'button',
             {
               key: id,
-              className: `faction-card faction-${id}${options.playerFaction === id ? ' selected' : ''}`,
+              className: `faction-card faction-${id}${selected === id ? ' selected' : ''}`,
               'data-testid': `faction-${id}`,
-              'aria-pressed': options.playerFaction === id,
-              onClick: () => update('playerFaction', id),
+              onClick: () => setSelected(id),
             },
             h('span', { className: 'faction-seal' }, faction.short),
             h('strong', null, faction.name),
@@ -153,27 +105,9 @@ function CampaignSetup({ onConfirm, onBack }) {
       ),
       h(
         'div',
-        { className: 'setup-groups' },
-        h(OptionGroup, {
-          title: '城池规模',
-          description: '决定战局长度',
-          options: MAP_SIZE_OPTIONS,
-          value: options.mapSize,
-          onChange: (value) => update('mapSize', value),
-        }),
-        h(OptionGroup, {
-          title: '难易程度',
-          description: '只改变开局兵力',
-          options: DIFFICULTY_OPTIONS,
-          value: options.difficulty,
-          onChange: (value) => update('difficulty', value),
-        }),
-      ),
-      h(
-        'div',
         { className: 'screen-actions' },
         h('button', { className: 'secondary-button', onClick: onBack }, '返回'),
-        h('button', { className: 'primary-button', 'data-testid': 'confirm-setup', onClick: () => onConfirm(options) }, `以${FACTIONS[options.playerFaction].name}开始战局`),
+        h('button', { className: 'primary-button', 'data-testid': 'confirm-faction', onClick: () => onConfirm(selected) }, `以${FACTIONS[selected].name}开局`),
       ),
     ),
   );
@@ -216,9 +150,9 @@ function ActionPreview({ state, command, mode, onConfirm, onCancel }) {
   );
 }
 
-function GameApp({ options, onExit }) {
-  const [game, setGame] = useState(() => beginFactionTurn(createLiteScenario(options)));
-  const [selectedCityId, setSelectedCityId] = useState(capitalId(options.playerFaction));
+function GameApp({ initialFaction, onExit }) {
+  const [game, setGame] = useState(() => beginFactionTurn(createLiteScenario(initialFaction)));
+  const [selectedCityId, setSelectedCityId] = useState(capitalId(initialFaction));
   const [mode, setMode] = useState(null);
   const [targetCityId, setTargetCityId] = useState(null);
   const [troops, setTroops] = useState(1);
@@ -392,7 +326,7 @@ function GameApp({ options, onExit }) {
     h(
       'header',
       { className: 'topbar' },
-      h('div', { className: 'brand-lockup' }, h('strong', null, `三国 · ${MAP_SIZE_NAMES[game.scenario.mapSize]}`), h('small', null, '攻取两座敌国首都')), 
+      h('div', { className: 'brand-lockup' }, h('strong', null, '三国 · 十二城'), h('small', null, '攻取两座敌国首都')), 
       h('div', { className: 'turn-info' },
         h('span', null, h('small', null, '轮次'), h('b', null, game.round)),
         h('span', null, h('small', null, '当前'), h('b', null, FACTIONS[game.turnFaction].name)),
@@ -487,7 +421,7 @@ function GameApp({ options, onExit }) {
         h('div', { className: 'section-title' }, '近期战报'),
         ...(game.log.length
           ? game.log.slice(-5).reverse().map((entry) => h('p', { key: entry.id, className: `log-${entry.faction}` }, entry.message))
-          : [h('p', { key: 'empty' }, `${MAP_SIZE_NAMES[game.scenario.mapSize]}列阵，战局即将开始。`)]),
+          : [h('p', { key: 'empty' }, '十二城列阵，战局即将开始。')]),
       ),
       busy && game.turnFaction !== game.playerFaction
         ? h('button', {
@@ -521,16 +455,16 @@ function GameApp({ options, onExit }) {
 
 export function App() {
   const [screen, setScreen] = useState('welcome');
-  const [options, setOptions] = useState(DEFAULT_OPTIONS);
-  if (screen === 'welcome') return h(Welcome, { onStart: () => setScreen('setup') });
-  if (screen === 'setup') return h(CampaignSetup, {
+  const [faction, setFaction] = useState('wei');
+  if (screen === 'welcome') return h(Welcome, { onStart: () => setScreen('faction') });
+  if (screen === 'faction') return h(FactionSelect, {
     onBack: () => setScreen('welcome'),
-    onConfirm: (selectedOptions) => {
-      setOptions(selectedOptions);
+    onConfirm: (selected) => {
+      setFaction(selected);
       setScreen('game');
     },
   });
-  return h(GameApp, { key: JSON.stringify(options), options, onExit: () => setScreen('welcome') });
+  return h(GameApp, { key: faction, initialFaction: faction, onExit: () => setScreen('welcome') });
 }
 
 if (typeof document !== 'undefined') {
