@@ -21,41 +21,41 @@ type Route = [string, string];
 export const FACTION_ORDER: FactionId[] = ['wei', 'shu', 'wu'];
 
 export const CITY_DEFINITIONS: CityDefinition[] = [
-  { id: 'xuchang', name: '许昌', owner: 'wei', capitalOf: 'wei', position: { x: 404, y: 152 } },
-  { id: 'wan', name: '宛城', owner: 'wei', position: { x: 352, y: 243 } },
-  { id: 'xiangyang', name: '襄阳', owner: 'wei', position: { x: 498, y: 336 } },
-  { id: 'hefei', name: '合肥', owner: 'wei', position: { x: 668, y: 246 } },
-  { id: 'luoyang', name: '洛阳', owner: 'wei', position: { x: 217, y: 152 } },
-  { id: 'shouchun', name: '寿春', owner: 'wei', position: { x: 565, y: 252 } },
-  { id: 'xinye', name: '新野', owner: 'wei', position: { x: 225, y: 270 } },
-  { id: 'ye', name: '邺城', owner: 'wei', position: { x: 419, y: 45 } },
-  { id: 'chenliu', name: '陈留', owner: 'wei', position: { x: 617, y: 107 } },
-  { id: 'puyang', name: '濮阳', owner: 'wei', position: { x: 700, y: 49 } },
-  { id: 'xuzhou', name: '徐州', owner: 'wei', position: { x: 814, y: 73 } },
+  { id: 'xuchang', name: '许昌', owner: 'wei', capitalOf: 'wei', position: { x: 420, y: 150 } },
+  { id: 'wan', name: '宛城', owner: 'wei', position: { x: 370, y: 285 } },
+  { id: 'xiangyang', name: '襄阳', owner: 'wei', position: { x: 500, y: 345 } },
+  { id: 'hefei', name: '合肥', owner: 'wei', position: { x: 720, y: 320 } },
+  { id: 'luoyang', name: '洛阳', owner: 'wei', position: { x: 210, y: 125 } },
+  { id: 'shouchun', name: '寿春', owner: 'wei', position: { x: 610, y: 260 } },
+  { id: 'xinye', name: '新野', owner: 'wei', position: { x: 280, y: 280 } },
+  { id: 'ye', name: '邺城', owner: 'wei', position: { x: 350, y: 45 } },
+  { id: 'chenliu', name: '陈留', owner: 'wei', position: { x: 700, y: 55 } },
+  { id: 'puyang', name: '濮阳', owner: 'wei', position: { x: 540, y: 120 } },
+  { id: 'xuzhou', name: '徐州', owner: 'wei', position: { x: 875, y: 130 } },
 
-  { id: 'chengdu', name: '成都', owner: 'shu', capitalOf: 'shu', position: { x: 206, y: 471 } },
-  { id: 'hanzhong', name: '汉中', owner: 'shu', position: { x: 223, y: 283 } },
-  { id: 'yongan', name: '永安', owner: 'shu', position: { x: 308, y: 479 } },
-  { id: 'jiangling', name: '江陵', owner: 'shu', position: { x: 399, y: 403 } },
-  { id: 'zitong', name: '梓潼', owner: 'shu', position: { x: 101, y: 374 } },
-  { id: 'jiangzhou', name: '江州', owner: 'shu', position: { x: 250, y: 540 } },
-  { id: 'wuling', name: '武陵', owner: 'shu', position: { x: 355, y: 606 } },
-  { id: 'lingling', name: '零陵', owner: 'shu', position: { x: 507, y: 592 } },
-  { id: 'guiyang', name: '桂阳', owner: 'shu', position: { x: 511, y: 503 } },
-  { id: 'jianning', name: '建宁', owner: 'shu', position: { x: 196, y: 627 } },
-  { id: 'yongchang', name: '永昌', owner: 'shu', position: { x: 86, y: 570 } },
+  { id: 'chengdu', name: '成都', owner: 'shu', capitalOf: 'shu', position: { x: 120, y: 455 } },
+  { id: 'hanzhong', name: '汉中', owner: 'shu', position: { x: 200, y: 275 } },
+  { id: 'yongan', name: '永安', owner: 'shu', position: { x: 300, y: 440 } },
+  { id: 'jiangling', name: '江陵', owner: 'shu', position: { x: 395, y: 425 } },
+  { id: 'zitong', name: '梓潼', owner: 'shu', position: { x: 80, y: 350 } },
+  { id: 'jiangzhou', name: '江州', owner: 'shu', position: { x: 180, y: 500 } },
+  { id: 'wuling', name: '武陵', owner: 'shu', position: { x: 420, y: 630 } },
+  { id: 'lingling', name: '零陵', owner: 'shu', position: { x: 555, y: 625 } },
+  { id: 'guiyang', name: '桂阳', owner: 'shu', position: { x: 610, y: 520 } },
+  { id: 'jianning', name: '建宁', owner: 'shu', position: { x: 145, y: 630 } },
+  { id: 'yongchang', name: '永昌', owner: 'shu', position: { x: 60, y: 560 } },
 
-  { id: 'jianye', name: '建业', owner: 'wu', capitalOf: 'wu', position: { x: 894, y: 580 } },
-  { id: 'lujiang', name: '庐江', owner: 'wu', position: { x: 712, y: 260 } },
-  { id: 'chaisang', name: '柴桑', owner: 'wu', position: { x: 621, y: 420 } },
-  { id: 'changsha', name: '长沙', owner: 'wu', position: { x: 503, y: 492 } },
-  { id: 'wuchang', name: '武昌', owner: 'wu', position: { x: 760, y: 425 } },
-  { id: 'yuzhang', name: '豫章', owner: 'wu', position: { x: 718, y: 499 } },
-  { id: 'danyang', name: '丹阳', owner: 'wu', position: { x: 795, y: 246 } },
-  { id: 'wu', name: '吴郡', owner: 'wu', position: { x: 885, y: 277 } },
-  { id: 'kuaiji', name: '会稽', owner: 'wu', position: { x: 935, y: 398 } },
-  { id: 'jianan', name: '建安', owner: 'wu', position: { x: 807, y: 591 } },
-  { id: 'jiaozhi', name: '交趾', owner: 'wu', position: { x: 656, y: 591 } },
+  { id: 'jianye', name: '建业', owner: 'wu', capitalOf: 'wu', position: { x: 850, y: 545 } },
+  { id: 'lujiang', name: '庐江', owner: 'wu', position: { x: 690, y: 400 } },
+  { id: 'chaisang', name: '柴桑', owner: 'wu', position: { x: 570, y: 390 } },
+  { id: 'changsha', name: '长沙', owner: 'wu', position: { x: 500, y: 500 } },
+  { id: 'wuchang', name: '武昌', owner: 'wu', position: { x: 770, y: 440 } },
+  { id: 'yuzhang', name: '豫章', owner: 'wu', position: { x: 760, y: 535 } },
+  { id: 'danyang', name: '丹阳', owner: 'wu', position: { x: 940, y: 220 } },
+  { id: 'wu', name: '吴郡', owner: 'wu', position: { x: 930, y: 300 } },
+  { id: 'kuaiji', name: '会稽', owner: 'wu', position: { x: 870, y: 450 } },
+  { id: 'jianan', name: '建安', owner: 'wu', position: { x: 930, y: 630 } },
+  { id: 'jiaozhi', name: '交趾', owner: 'wu', position: { x: 650, y: 610 } },
 ];
 
 const CITY_BY_ID = new Map(CITY_DEFINITIONS.map((city) => [city.id, city]));
@@ -67,71 +67,109 @@ const CITY_ORDERS: Record<MapSize, Record<FactionId, string[]>> = {
     wu: ['jianye', 'lujiang', 'changsha', 'chaisang'],
   },
   21: {
-    wei: ['xuchang', 'luoyang', 'xinye', 'wan', 'xiangyang', 'shouchun', 'hefei'],
+    wei: ['xuchang', 'luoyang', 'wan', 'xiangyang', 'shouchun', 'hefei', 'xuzhou'],
     shu: ['chengdu', 'zitong', 'hanzhong', 'jiangling', 'yongan', 'wuling', 'jiangzhou'],
-    wu: ['jianye', 'danyang', 'wuchang', 'lujiang', 'changsha', 'chaisang', 'yuzhang'],
+    wu: ['jianye', 'danyang', 'lujiang', 'wuchang', 'changsha', 'chaisang', 'yuzhang'],
   },
   33: {
     wei: ['xuchang', 'luoyang', 'ye', 'puyang', 'chenliu', 'xuzhou', 'hefei', 'shouchun', 'xiangyang', 'wan', 'xinye'],
-    shu: ['chengdu', 'zitong', 'hanzhong', 'jiangling', 'yongan', 'wuling', 'lingling', 'guiyang', 'jiangzhou', 'jianning', 'yongchang'],
-    wu: ['jianye', 'danyang', 'wu', 'kuaiji', 'jianan', 'jiaozhi', 'changsha', 'chaisang', 'yuzhang', 'wuchang', 'lujiang'],
+    shu: ['chengdu', 'zitong', 'hanzhong', 'jiangling', 'yongan', 'jiangzhou', 'jianning', 'yongchang', 'wuling', 'lingling', 'guiyang'],
+    wu: ['jianye', 'jianan', 'jiaozhi', 'changsha', 'chaisang', 'yuzhang', 'wuchang', 'lujiang', 'danyang', 'wu', 'kuaiji'],
   },
 };
 
-const SPARSE_BORDER_ROUTES: Route[] = [
-  ['wan', 'hanzhong'],
-  ['hefei', 'lujiang'],
-  ['jiangling', 'changsha'],
-];
-
-const STANDARD_BORDER_ROUTES: Route[] = [
-  ['xiangyang', 'jiangling'],
-  ['xiangyang', 'chaisang'],
-  ['yongan', 'chaisang'],
-];
-
-const DENSE_BORDER_ROUTES: Route[] = [
-  ['wan', 'yongan'],
-  ['hefei', 'chaisang'],
-  ['yongan', 'changsha'],
-];
+const ROUTES_BY_SIZE: Record<MapSize, Route[]> = {
+  12: [
+    ['xuchang', 'wan'],
+    ['wan', 'xiangyang'],
+    ['xiangyang', 'hefei'],
+    ['chengdu', 'hanzhong'],
+    ['hanzhong', 'jiangling'],
+    ['jiangling', 'yongan'],
+    ['jianye', 'lujiang'],
+    ['lujiang', 'chaisang'],
+    ['chaisang', 'changsha'],
+    ['wan', 'hanzhong'],
+    ['xiangyang', 'jiangling'],
+    ['hefei', 'lujiang'],
+  ],
+  21: [
+    ['luoyang', 'xuchang'],
+    ['xuchang', 'wan'],
+    ['wan', 'xiangyang'],
+    ['xiangyang', 'shouchun'],
+    ['shouchun', 'hefei'],
+    ['hefei', 'xuzhou'],
+    ['chengdu', 'zitong'],
+    ['zitong', 'hanzhong'],
+    ['hanzhong', 'jiangling'],
+    ['jiangling', 'yongan'],
+    ['yongan', 'jiangzhou'],
+    ['yongan', 'wuling'],
+    ['jianye', 'yuzhang'],
+    ['yuzhang', 'wuchang'],
+    ['wuchang', 'lujiang'],
+    ['lujiang', 'danyang'],
+    ['lujiang', 'chaisang'],
+    ['chaisang', 'changsha'],
+    ['wan', 'hanzhong'],
+    ['xiangyang', 'jiangling'],
+    ['hefei', 'lujiang'],
+  ],
+  33: [
+    ['luoyang', 'ye'],
+    ['ye', 'xuchang'],
+    ['xuchang', 'puyang'],
+    ['puyang', 'chenliu'],
+    ['chenliu', 'xuzhou'],
+    ['xuzhou', 'hefei'],
+    ['hefei', 'shouchun'],
+    ['shouchun', 'xiangyang'],
+    ['xiangyang', 'wan'],
+    ['wan', 'xinye'],
+    ['chengdu', 'zitong'],
+    ['zitong', 'hanzhong'],
+    ['hanzhong', 'jiangling'],
+    ['jiangling', 'yongan'],
+    ['yongan', 'jiangzhou'],
+    ['jiangzhou', 'jianning'],
+    ['jianning', 'yongchang'],
+    ['yongan', 'wuling'],
+    ['wuling', 'lingling'],
+    ['lingling', 'guiyang'],
+    ['jianye', 'yuzhang'],
+    ['yuzhang', 'wuchang'],
+    ['wuchang', 'lujiang'],
+    ['lujiang', 'chaisang'],
+    ['chaisang', 'changsha'],
+    ['changsha', 'jiaozhi'],
+    ['jiaozhi', 'jianan'],
+    ['jianan', 'kuaiji'],
+    ['kuaiji', 'wu'],
+    ['wu', 'danyang'],
+    ['xinye', 'hanzhong'],
+    ['xiangyang', 'jiangling'],
+    ['hefei', 'lujiang'],
+    ['guiyang', 'changsha'],
+  ],
+};
 
 function routeKey([left, right]: Route): string {
   return [left, right].sort().join('~');
 }
 
-function uniqueRoutes(routes: Route[]): Route[] {
-  const seen = new Set<string>();
-  return routes.filter((route) => {
-    const key = routeKey(route);
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-export function routesForScenario(mapSize: MapSize, density: RouteDensity): Route[] {
+export function routesForScenario(mapSize: MapSize, _density: RouteDensity = 'standard'): Route[] {
+  const activeIds = new Set(FACTION_ORDER.flatMap((faction) => CITY_ORDERS[mapSize][faction]));
   const routes: Route[] = [];
-
-  for (const faction of FACTION_ORDER) {
-    const cityIds = CITY_ORDERS[mapSize][faction];
-    for (let index = 0; index < cityIds.length - 1; index += 1) {
-      routes.push([cityIds[index], cityIds[index + 1]]);
-    }
-    if (density !== 'sparse') {
-      routes.push([cityIds[0], cityIds[cityIds.length - 1]]);
-    }
-    if (density === 'dense') {
-      for (let index = 0; index < cityIds.length - 2; index += 1) {
-        routes.push([cityIds[index], cityIds[index + 2]]);
-      }
-    }
+  const seen = new Set<string>();
+  for (const [left, right] of ROUTES_BY_SIZE[mapSize]) {
+    if (!activeIds.has(left) || !activeIds.has(right)) continue;
+    const key = routeKey([left, right]);
+    if (seen.has(key)) continue;
+    routes.push([left, right]);
+    seen.add(key);
   }
-
-  routes.push(...SPARSE_BORDER_ROUTES);
-  if (density !== 'sparse') routes.push(...STANDARD_BORDER_ROUTES);
-  if (density === 'dense') routes.push(...DENSE_BORDER_ROUTES);
-  return uniqueRoutes(routes);
+  return routes;
 }
 
 export const ROUTES: Route[] = routesForScenario(12, 'standard');

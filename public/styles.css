@@ -921,6 +921,15 @@ button:disabled {
   box-shadow: 0 5px 16px rgba(57, 42, 25, 0.16);
 }
 
+.map-frame.map-size-33 .map-legend {
+  top: 14px;
+  right: auto;
+  bottom: auto;
+  left: 14px;
+  max-width: 320px;
+  flex-wrap: wrap;
+}
+
 .map-legend span {
   display: flex;
   align-items: center;
@@ -1635,6 +1644,14 @@ button:disabled {
     gap: 6px;
     padding: 6px 7px;
     font-size: 9px;
+  }
+
+  .map-frame.map-size-33 .map-legend {
+    top: 7px;
+    right: auto;
+    bottom: auto;
+    left: 7px;
+    max-width: 270px;
   }
 
   .city-label {

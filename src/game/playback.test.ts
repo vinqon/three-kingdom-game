@@ -14,18 +14,18 @@ describe('action playback model', () => {
   it('describes a successful attack without changing either input state', () => {
     const before = beginFactionTurn(createLiteScenario('wei'));
     before.cities.xiangyang.troops = 6;
-    before.cities.chaisang.troops = 2;
-    const command = { originCityId: 'xiangyang', targetCityId: 'chaisang', troops: 5 };
+    before.cities.jiangling.troops = 2;
+    const command = { originCityId: 'xiangyang', targetCityId: 'jiangling', troops: 5 };
     const after = attack(before, command).state;
 
     const playback = createActionPlayback(before, after, 'attack', command);
 
     assert.equal(playback.outcome, 'captured');
     assert.equal(playback.originName, '襄阳');
-    assert.equal(playback.targetName, '柴桑');
+    assert.equal(playback.targetName, '江陵');
     assert.equal(playback.afterTargetTroops, 3);
-    assert.equal(before.cities.chaisang.owner, 'wu');
-    assert.equal(after.cities.chaisang.owner, 'wei');
+    assert.equal(before.cities.jiangling.owner, 'shu');
+    assert.equal(after.cities.jiangling.owner, 'wei');
   });
 
   it('distinguishes transfer and held-attack outcomes', () => {
@@ -38,7 +38,7 @@ describe('action playback model', () => {
     );
 
     const beforeAttack = beginFactionTurn(createLiteScenario('wei'));
-    const attackCommand = { originCityId: 'xiangyang', targetCityId: 'chaisang', troops: 1 };
+    const attackCommand = { originCityId: 'xiangyang', targetCityId: 'jiangling', troops: 1 };
     const afterAttack = attack(beforeAttack, attackCommand).state;
     assert.equal(
       createActionPlayback(beforeAttack, afterAttack, 'attack', attackCommand).outcome,
@@ -60,8 +60,8 @@ describe('action playback model', () => {
   it('normal and skipped playback expose the exact same final state and log', () => {
     const before = beginFactionTurn(createLiteScenario('wei'));
     before.cities.xiangyang.troops = 6;
-    before.cities.chaisang.troops = 2;
-    const command = { originCityId: 'xiangyang', targetCityId: 'chaisang', troops: 5 };
+    before.cities.jiangling.troops = 2;
+    const command = { originCityId: 'xiangyang', targetCityId: 'jiangling', troops: 5 };
     const after = attack(before, command).state;
 
     assert.equal(visibleStateForPlayback(before, after, 'announce'), before);

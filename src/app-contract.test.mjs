@@ -9,12 +9,13 @@ const styles = await readFile(new URL('../public/styles.css', import.meta.url), 
 const scenarioSource = await readFile(new URL('./game/scenario.ts', import.meta.url), 'utf8');
 
 describe('lightweight browser game contract', () => {
-  it('uses precomputed city coordinates without runtime route geometry', () => {
+  it('uses explicit grouped route plans without legacy route splitting', () => {
     assert.doesNotMatch(
       scenarioSource,
       /ROUTE_CLEARANCE|ROUTE_ENDPOINT_MARGIN|splitRouteAtBlockingCities|splitRoutesUntilClear/,
     );
-    assert.match(scenarioSource, /return uniqueRoutes\(routes\);/);
+    assert.match(scenarioSource, /ROUTES_BY_SIZE/);
+    assert.doesNotMatch(scenarioSource, /DEGREE_LIMIT_BY_DENSITY|buildSparsePath/);
   });
 
   it('exposes the complete lightweight interaction path', () => {
@@ -41,16 +42,16 @@ describe('lightweight browser game contract', () => {
     assert.match(mapSource, /`city-\$\{city\.id\}`/);
   });
 
-  it('offers deterministic campaign size, route, and difficulty options before starting', () => {
+  it('offers deterministic campaign size and difficulty options before starting', () => {
     for (const testId of [
       'map-size-12', 'map-size-21', 'map-size-33',
-      'route-density-sparse', 'route-density-standard', 'route-density-dense',
       'difficulty-easy', 'difficulty-normal', 'difficulty-hard',
     ]) {
       assert.match(appSource, new RegExp(`['"]${testId}['"]`), testId);
     }
+    assert.doesNotMatch(appSource, /route-density-sparse|route-density-standard|route-density-dense/);
     assert.match(appSource, /城池规模/);
-    assert.match(appSource, /连接方式/);
+    assert.doesNotMatch(appSource, /连接方式/);
     assert.match(appSource, /难易程度/);
     assert.match(appSource, /mapSize:\s*33/);
     assert.match(appSource, /routeDensity:\s*['"]standard['"]/);

@@ -31,12 +31,6 @@ const MAP_SIZE_OPTIONS = [
   { value: 33, label: '33 城', detail: '大战 · 每国 11 城', testId: 'map-size-33' },
 ];
 
-const ROUTE_OPTIONS = [
-  { value: 'sparse', label: '精简', detail: '战线清晰', testId: 'route-density-sparse' },
-  { value: 'standard', label: '标准', detail: '攻守均衡', testId: 'route-density-standard' },
-  { value: 'dense', label: '密集', detail: '侧翼更多', testId: 'route-density-dense' },
-];
-
 const DIFFICULTY_OPTIONS = [
   { value: 'easy', label: '简单', detail: '玩家每城多 1 兵', testId: 'difficulty-easy' },
   { value: 'normal', label: '中等', detail: '三方兵力相同', testId: 'difficulty-normal' },
@@ -166,13 +160,6 @@ function CampaignSetup({ onConfirm, onBack }) {
           options: MAP_SIZE_OPTIONS,
           value: options.mapSize,
           onChange: (value) => update('mapSize', value),
-        }),
-        h(OptionGroup, {
-          title: '连接方式',
-          description: '国内实线 · 跨国虚线',
-          options: ROUTE_OPTIONS,
-          value: options.routeDensity,
-          onChange: (value) => update('routeDensity', value),
         }),
         h(OptionGroup, {
           title: '难易程度',

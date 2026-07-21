@@ -7,15 +7,20 @@ import { createLiteScenario } from './scenario.ts';
 
 describe('two-action deterministic AI', () => {
   it('prefers a capturable original capital over an ordinary city', () => {
-    const state = beginFactionTurn(createLiteScenario('shu'));
+    const state = beginFactionTurn(createLiteScenario({
+      playerFaction: 'shu',
+      mapSize: 12,
+      routeDensity: 'dense',
+      difficulty: 'easy',
+    }));
     state.turnFaction = 'wu';
-    state.cities.hefei.owner = 'wu';
-    state.cities.hefei.troops = 9;
+    state.cities.wan.owner = 'wu';
+    state.cities.wan.troops = 9;
     state.cities.xuchang.troops = 2;
     state.cities.xiangyang.owner = 'shu';
     state.cities.xiangyang.troops = 1;
     const decision = chooseAiAction(state);
-    assert.deepEqual(decision, { mode: 'attack', originCityId: 'hefei', targetCityId: 'xuchang', troops: 8 });
+    assert.deepEqual(decision, { mode: 'attack', originCityId: 'wan', targetCityId: 'xuchang', troops: 8 });
   });
 
   it('runs at most two legal actions and leaves every city occupied', () => {
@@ -28,17 +33,21 @@ describe('two-action deterministic AI', () => {
   });
 
   it('reinforces a threatened capital before taking an ordinary winning attack', () => {
-    const state = beginFactionTurn(createLiteScenario('wei'));
-    state.turnFaction = 'wu';
-    state.cities.jianye.troops = 2;
-    state.cities.lujiang.owner = 'wei';
-    state.cities.lujiang.troops = 3;
-    state.cities.chaisang.troops = 5;
-    state.cities.yongan.troops = 1;
+    const state = beginFactionTurn(createLiteScenario({
+      playerFaction: 'shu',
+      mapSize: 21,
+      routeDensity: 'standard',
+      difficulty: 'easy',
+    }));
+    state.turnFaction = 'wei';
+    state.cities.xuchang.troops = 2;
+    state.cities.wan.owner = 'shu';
+    state.cities.wan.troops = 3;
+    state.cities.luoyang.troops = 5;
     assert.deepEqual(chooseAiAction(state), {
       mode: 'transfer',
-      originCityId: 'chaisang',
-      targetCityId: 'jianye',
+      originCityId: 'luoyang',
+      targetCityId: 'xuchang',
       troops: 4,
     });
   });
@@ -50,7 +59,12 @@ describe('two-action deterministic AI', () => {
   });
 
   it('moves rear troops toward the frontline closest to a remaining enemy capital', () => {
-    const state = beginFactionTurn(createLiteScenario('shu'));
+    const state = beginFactionTurn(createLiteScenario({
+      playerFaction: 'shu',
+      mapSize: 12,
+      routeDensity: 'dense',
+      difficulty: 'easy',
+    }));
     state.turnFaction = 'wei';
     state.cities.chengdu.owner = 'wei';
     state.cities.chengdu.troops = 1;
@@ -61,9 +75,9 @@ describe('two-action deterministic AI', () => {
 
     assert.deepEqual(chooseAiAction(state), {
       mode: 'transfer',
-      originCityId: 'xuchang',
-      targetCityId: 'hefei',
-      troops: 6,
+      originCityId: 'wan',
+      targetCityId: 'xiangyang',
+      troops: 4,
     });
   });
 });

@@ -78,7 +78,7 @@ describe('turn reinforcement and actions', () => {
     assert.throws(() => transfer(state, { originCityId: 'xuchang', targetCityId: 'wan', troops: 1.5 }), GameRuleError);
 
     const once = transfer(state, { originCityId: 'xuchang', targetCityId: 'wan', troops: 1 }).state;
-    const twice = transfer(once, { originCityId: 'wan', targetCityId: 'xiangyang', troops: 1 }).state;
+    const twice = transfer(once, { originCityId: 'wan', targetCityId: 'xuchang', troops: 1 }).state;
     assert.equal(twice.actionsRemaining, 0);
     assert.throws(() => transfer(twice, { originCityId: 'xiangyang', targetCityId: 'hefei', troops: 1 }), GameRuleError);
   });
