@@ -102,6 +102,13 @@ describe('lightweight browser game contract', () => {
     assert.match(mapSource, /tabIndex: isDisabled \? -1 : 0/);
   });
 
+  it('cancels a pending command from invalid map clicks', () => {
+    assert.match(appSource, /onCancelCommand/);
+    assert.match(mapSource, /onCancelCommand/);
+    assert.match(mapSource, /event\.stopPropagation/);
+    assert.match(mapSource, /lockToLegalTargets && !interactionLocked/);
+  });
+
   it('contains only the approved lightweight rules and copy', () => {
     assert.match(appSource, /自动增兵/);
     assert.match(appSource, /每回合 2 次行动/);

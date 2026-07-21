@@ -252,13 +252,19 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
     setNotice(ERROR_COPY[error?.code ?? error?.message] ?? '这一步无法执行，请重新选择。');
   }
 
+  function cancelCommand() {
+    if (!mode || busy) return;
+    clearCommand(true);
+    setNotice('已取消当前命令。');
+  }
+
   function selectCity(cityId) {
     if (busy) return;
     if (mode) {
       if (legalTargetIds.includes(cityId)) {
         setTargetCityId(cityId);
       } else {
-        setNotice('当前命令只能选择地图上高亮的邻接城市。');
+        cancelCommand();
       }
       return;
     }
@@ -426,6 +432,7 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
         reinforcingCityIds,
         interactionLocked: busy,
         onSelectCity: selectCity,
+        onCancelCommand: cancelCommand,
       }),
     ),
     h(

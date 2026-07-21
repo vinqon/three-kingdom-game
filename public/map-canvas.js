@@ -32,6 +32,7 @@ export function StrategyMap({
   reinforcingCityIds = [],
   interactionLocked = false,
   onSelectCity,
+  onCancelCommand,
 }) {
   const legal = new Set(legalTargetIds);
   const selected = selectedCityId ? state.cities[selectedCityId] : null;
@@ -94,6 +95,9 @@ export function StrategyMap({
         role: 'region',
         'aria-label': `三国${cityCount ?? Object.keys(state.cities).length}城战略地图`,
         'data-testid': 'game-map',
+        onClick: () => {
+          if (lockToLegalTargets && !interactionLocked) onCancelCommand?.();
+        },
       },
       h(
         'g',
@@ -147,8 +151,13 @@ export function StrategyMap({
               'aria-disabled': isDisabled ? 'true' : undefined,
               'data-testid': `city-${city.id}`,
               'aria-label': `${city.name}，${FACTION_MARKS[city.owner]}，${city.troops}兵${city.capitalOf ? '，首都' : ''}`,
-              onClick: () => {
-                if (!isDisabled) onSelectCity(city.id);
+              onClick: (event) => {
+                event.stopPropagation();
+                if (!isDisabled) {
+                  onSelectCity(city.id);
+                } else if (lockToLegalTargets && !interactionLocked) {
+                  onCancelCommand?.();
+                }
               },
               onKeyDown: (event) => {
                 if (!isDisabled && (event.key === 'Enter' || event.key === ' ')) {
