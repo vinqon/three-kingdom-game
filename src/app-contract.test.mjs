@@ -109,6 +109,39 @@ describe('lightweight browser game contract', () => {
     assert.match(mapSource, /lockToLegalTargets && !interactionLocked/);
   });
 
+  it('keeps iPad setup screens scrollable and compact', () => {
+    assert.match(styles, /\.faction-screen[^{]*{[^}]*overflow-y:\s*auto/s);
+    assert.match(styles, /-webkit-overflow-scrolling:\s*touch/);
+    assert.match(styles, /@media \(min-width:\s*621px\) and \(max-width:\s*1180px\)/);
+    assert.match(styles, /\.faction-select-card[^{]*{[^}]*max-height:\s*none/s);
+  });
+
+  it('keeps command actions out of the end-turn footer', () => {
+    assert.match(appSource, /className: ['"]command-scroll['"]/);
+    assert.match(appSource, /className: ['"]command-footer['"]/);
+    assert.match(appSource, /commandScrollRef/);
+    assert.match(appSource, /scrollTo/);
+    assert.match(styles, /\.command-scroll/);
+    assert.match(styles, /\.command-footer/);
+    assert.doesNotMatch(styles, /\.end-turn-button\s*{[^}]*position:\s*absolute/s);
+  });
+
+  it('declares installable app icons for saved desktop apps', async () => {
+    assert.match(html, /rel="manifest"/);
+    assert.match(html, /apple-touch-icon/);
+    const manifest = JSON.parse(await readFile(new URL('../public/manifest.webmanifest', import.meta.url), 'utf8'));
+    assert.equal(manifest.display, 'standalone');
+    assert.ok(manifest.icons.some((icon) => icon.sizes === '192x192' && icon.type === 'image/png'));
+    assert.ok(manifest.icons.some((icon) => icon.sizes === '512x512' && icon.type === 'image/png'));
+    for (const iconFile of [
+      '../public/assets/app-icon-192.png',
+      '../public/assets/app-icon-512.png',
+      '../public/assets/apple-touch-icon.png',
+    ]) {
+      assert.ok((await stat(new URL(iconFile, import.meta.url))).size > 1000, iconFile);
+    }
+  });
+
   it('contains only the approved lightweight rules and copy', () => {
     assert.match(appSource, /自动增兵/);
     assert.match(appSource, /每回合 2 次行动/);

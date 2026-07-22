@@ -1,0 +1,23 @@
+{
+  "name": "三国·多城战局",
+  "short_name": "三国战局",
+  "description": "轻量、确定性的三国网页策略游戏。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#17201c",
+  "theme_color": "#202b25",
+  "icons": [
+    {
+      "src": "./assets/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
