@@ -62,6 +62,70 @@ function delay(milliseconds) {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 }
 
+function clampNumber(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function overlaps(left, top, width, height, city, radius = 52) {
+  return !(
+    left + width < city.position.x - radius ||
+    left > city.position.x + radius ||
+    top + height < city.position.y - radius ||
+    top > city.position.y + radius
+  );
+}
+
+function candidatePlacements(city, width, height, gap) {
+  return [
+    { left: city.position.x + gap, top: city.position.y - height / 2 },
+    { left: city.position.x - width - gap, top: city.position.y - height / 2 },
+    { left: city.position.x - width / 2, top: city.position.y + gap },
+    { left: city.position.x - width / 2, top: city.position.y - height - gap },
+    { left: city.position.x + gap * 0.7, top: city.position.y + gap * 0.45 },
+    { left: city.position.x - width - gap * 0.7, top: city.position.y + gap * 0.45 },
+    { left: city.position.x + gap * 0.7, top: city.position.y - height - gap * 0.45 },
+    { left: city.position.x - width - gap * 0.7, top: city.position.y - height - gap * 0.45 },
+  ];
+}
+
+function floatingPanelPlacement(selectedCity, cities, targetCities = []) {
+  if (!selectedCity) return { '--city-left': '50%', '--city-top': '50%' };
+  const width = 170;
+  const height = 285;
+  const margin = 18;
+  const gap = 102;
+  const placements = candidatePlacements(selectedCity, width, height, gap)
+    .map((placement) => ({
+      left: clampNumber(placement.left, margin, 1000 - width - margin),
+      top: clampNumber(placement.top, margin, 730 - height - margin),
+    }))
+    .map((placement) => {
+      const centerX = placement.left + width / 2;
+      const centerY = placement.top + height / 2;
+      const targetOverlapCount = targetCities.filter((city) => overlaps(placement.left, placement.top, width, height, city, 62)).length;
+      const otherOverlapCount = cities.filter((city) => city.id !== selectedCity.id && !targetCities.some((target) => target.id === city.id) && overlaps(placement.left, placement.top, width, height, city, 40)).length;
+      const selectedOverlap = overlaps(placement.left, placement.top, width, height, selectedCity, 82) ? 300 : 0;
+      const distance = Math.hypot(centerX - selectedCity.position.x, centerY - selectedCity.position.y) / 12;
+      const targetCenter = targetCities.length
+        ? {
+            x: targetCities.reduce((sum, city) => sum + city.position.x, 0) / targetCities.length,
+            y: targetCities.reduce((sum, city) => sum + city.position.y, 0) / targetCities.length,
+          }
+        : null;
+      const targetDirectionPenalty = targetCenter
+        ? (Math.sign(centerX - selectedCity.position.x) === Math.sign(targetCenter.x - selectedCity.position.x) ? 24 : 0)
+          + (Math.sign(centerY - selectedCity.position.y) === Math.sign(targetCenter.y - selectedCity.position.y) ? 14 : 0)
+        : 0;
+      return { ...placement, score: selectedOverlap + targetOverlapCount * 120 + otherOverlapCount * 2 + targetDirectionPenalty + distance };
+    })
+    .sort((a, b) => a.score - b.score);
+  const best = placements[0];
+  return {
+    '--city-left': `${best.left / 10}%`,
+    '--city-top': `${best.top / 7.3}%`,
+  };
+}
+
 function Welcome({ onStart }) {
   return h(
     'main',
@@ -221,6 +285,7 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
   const [mode, setMode] = useState(null);
   const [targetCityId, setTargetCityId] = useState(null);
   const [troops, setTroops] = useState(1);
+  const [commandPanelVisible, setCommandPanelVisible] = useState(false);
   const [notice, setNotice] = useState('你的城市已经完成本回合自动增兵。');
   const [busy, setBusy] = useState(false);
   const [playback, setPlayback] = useState(null);
@@ -269,6 +334,7 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
       return;
     }
     setSelectedCityId(cityId);
+    setCommandPanelVisible(true);
     clearCommand(true);
     const city = game.cities[cityId];
     setNotice(city.owner === game.playerFaction ? `已选择${city.name}。` : `${city.name}由${FACTIONS[city.owner].name}控制。`);
@@ -328,6 +394,7 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
       const result = actionMode === 'attack' ? attack(game, actionCommand) : transfer(game, actionCommand);
       await playAction(game, result, actionMode, actionCommand, 'player');
       setSelectedCityId(actionCommand.targetCityId);
+      setCommandPanelVisible(true);
     } catch (error) {
       showError(error);
     } finally {
@@ -391,6 +458,7 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
   const transferCount = selectedCity ? legalTargets(game, selectedCity.id, 'transfer').length : 0;
   const attackCount = selectedCity ? legalTargets(game, selectedCity.id, 'attack').length : 0;
   const mapSize = MAP_SIZES.find((size) => size.count === cityCount);
+  const floatingPanelStyle = floatingPanelPlacement(selectedCity, Object.values(game.cities), legalTargetCities);
 
   return h(
     'main',
@@ -434,84 +502,90 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
         onSelectCity: selectCity,
         onCancelCommand: cancelCommand,
       }),
-    ),
-    h(
-      'aside',
-      { className: 'command-panel' },
-      h('div', { className: 'panel-city-heading' },
-        h('div', null,
-          h('small', null, selectedCity?.capitalOf ? `${FACTIONS[selectedCity.capitalOf].name}原始首都` : `${FACTIONS[selectedCity?.owner].name}城市`),
-          h('h2', null, selectedCity?.name ?? '选择城市'),
-        ),
-        selectedCity && h('span', { className: `owner-token faction-${selectedCity.owner}` }, FACTIONS[selectedCity.owner].short),
-      ),
-      selectedCity && h('div', { className: 'troop-panel' }, h('span', null, '当前兵力'), h('b', null, selectedCity.troops), h('small', null, selectedCity.capitalOf ? '自动增长至 8' : '自动增长至 6')),
-      h('div', { className: 'action-badge' }, `本回合还可行动 ${game.actionsRemaining} 次`),
-      canAct
-        ? h(
-            React.Fragment,
-            null,
-            h('div', { className: 'mode-grid' },
-              h('button', {
-                className: `mode-button${mode === 'transfer' ? ' active' : ''}`,
-                'data-testid': 'mode-transfer',
-                disabled: transferCount === 0,
-                onClick: () => chooseMode('transfer'),
-              }, h('strong', null, '调兵'), h('small', null, `${transferCount} 个邻城可选`)),
-              h('button', {
-                className: `mode-button attack${mode === 'attack' ? ' active' : ''}`,
-                'data-testid': 'mode-attack',
-                disabled: attackCount === 0,
-                onClick: () => chooseMode('attack'),
-              }, h('strong', null, '进攻'), h('small', null, `${attackCount} 个敌城可选`)),
-            ),
-            mode && h('div', { className: 'target-list' },
-              h('small', null, mode === 'transfer' ? '选择己方邻城' : '选择敌方邻城'),
-              h('div', null, ...legalTargetCities.map((city) => h('button', {
-                key: city.id,
-                className: targetCityId === city.id ? 'selected' : '',
-                onClick: () => setTargetCityId(city.id),
-              }, `${city.name} · ${city.troops}兵`))),
-            ),
-            targetCity && h('label', { className: 'troop-input' },
-              h('span', null, mode === 'transfer' ? '调动兵力' : '进攻兵力'),
-              h('input', {
-                type: 'range',
-                min: 1,
-                max: maxTroops,
-                value: Math.min(troops, maxTroops),
-                'data-testid': 'troop-stepper',
-                onChange: (event) => setTroops(Number(event.target.value)),
-              }),
-              h('b', null, Math.min(troops, maxTroops)),
-            ),
-            command && h(ActionPreview, { state: game, command, mode, onConfirm: confirmAction, onCancel: () => clearCommand(true) }),
-          )
-        : h('p', { className: 'panel-hint' },
-            busy ? (game.turnFaction === game.playerFaction ? '正在播放你的行动。' : '电脑正在行动，请留意地图。') : selectedCity?.owner !== game.playerFaction ? '敌方城市仅供查看，请选择自己的城市。' : game.actionsRemaining === 0 ? '两次行动已用完，可以结束回合。' : '这座城市只有 1 兵，无法出发。',
+      commandPanelVisible && selectedCity && h(
+        'section',
+        {
+          className: 'floating-command-panel',
+          style: floatingPanelStyle,
+          'data-testid': 'floating-command-panel',
+        },
+        h('div', { className: 'panel-city-heading' },
+          h('div', null,
+            h('small', null, selectedCity.capitalOf ? `${FACTIONS[selectedCity.capitalOf].name}原始首都` : `${FACTIONS[selectedCity.owner].name}城市`),
+            h('h2', null, selectedCity.name),
           ),
-      h('div', { className: 'notice-box', role: 'status', 'aria-live': 'polite' }, notice),
-      h('section', { className: 'war-log', 'aria-label': '近期战报', 'aria-live': 'polite', 'aria-atomic': 'false' },
+          h('span', { className: `owner-token faction-${selectedCity.owner}` }, FACTIONS[selectedCity.owner].short),
+        ),
+        h('div', { className: 'troop-panel' }, h('span', null, '当前兵力'), h('b', null, selectedCity.troops), h('small', null, selectedCity.capitalOf ? '自动增长至 8' : '自动增长至 6')),
+        canAct
+          ? h(
+              React.Fragment,
+              null,
+              h('div', { className: 'mode-grid' },
+                h('button', {
+                  className: `mode-button${mode === 'transfer' ? ' active' : ''}`,
+                  'data-testid': 'mode-transfer',
+                  disabled: transferCount === 0,
+                  onClick: () => chooseMode('transfer'),
+                }, h('strong', null, '调兵'), h('small', null, `${transferCount} 个邻城可选`)),
+                h('button', {
+                  className: `mode-button attack${mode === 'attack' ? ' active' : ''}`,
+                  'data-testid': 'mode-attack',
+                  disabled: attackCount === 0,
+                  onClick: () => chooseMode('attack'),
+                }, h('strong', null, '进攻'), h('small', null, `${attackCount} 个敌城可选`)),
+              ),
+              mode && h('div', { className: 'target-list' },
+                h('small', null, mode === 'transfer' ? '选择己方邻城' : '选择敌方邻城'),
+                h('div', null, ...legalTargetCities.map((city) => h('button', {
+                  key: city.id,
+                  className: targetCityId === city.id ? 'selected' : '',
+                  onClick: () => setTargetCityId(city.id),
+                }, `${city.name} · ${city.troops}兵`))),
+              ),
+              targetCity && h('label', { className: 'troop-input' },
+                h('span', null, mode === 'transfer' ? '调动兵力' : '进攻兵力'),
+                h('input', {
+                  type: 'range',
+                  min: 1,
+                  max: maxTroops,
+                  value: Math.min(troops, maxTroops),
+                  'data-testid': 'troop-stepper',
+                  onChange: (event) => setTroops(Number(event.target.value)),
+                }),
+                h('b', null, Math.min(troops, maxTroops)),
+              ),
+              command && h(ActionPreview, { state: game, command, mode, onConfirm: confirmAction, onCancel: () => clearCommand(true) }),
+            )
+          : h('p', { className: 'panel-hint' },
+              busy ? (game.turnFaction === game.playerFaction ? '正在播放你的行动。' : '电脑正在行动，请留意地图。') : selectedCity.owner !== game.playerFaction ? '敌方城市仅供查看，请选择自己的城市。' : game.actionsRemaining === 0 ? '两次行动已用完，可以结束回合。' : '这座城市只有 1 兵，无法出发。',
+                    ),
+              ),
+      h('div', { className: 'map-bottom-controls' },
+        h('span', { className: 'actions-left-pill' }, `剩余行动 ${game.actionsRemaining}`),
+        h('span', { className: 'bottom-notice', role: 'status', 'aria-live': 'polite' }, notice),
+        busy && game.turnFaction !== game.playerFaction
+          ? h('button', {
+              className: 'end-turn-button skip-playback-button',
+              'data-testid': 'skip-playback',
+              onClick: () => {
+                skipPlaybackRef.current = true;
+                setNotice('正在跳过电脑演出…');
+              },
+            }, '跳过演出')
+          : h('button', {
+              className: 'end-turn-button',
+              'data-testid': 'end-turn',
+              disabled: busy || game.status !== 'playing',
+              onClick: endPlayerTurn,
+            }, busy ? '行动演出中…' : '结束回合'),
+      ),
+      h('section', { className: 'war-log war-log-overlay', 'aria-label': '近期战报', 'aria-live': 'polite', 'aria-atomic': 'false' },
         h('div', { className: 'section-title' }, '近期战报'),
         ...(game.log.length
           ? game.log.slice(-5).reverse().map((entry) => h('p', { key: entry.id, className: `log-${entry.faction}` }, entry.message))
           : [h('p', { key: 'empty' }, `${mapSize.name}列阵，战局即将开始。`)]),
       ),
-      busy && game.turnFaction !== game.playerFaction
-        ? h('button', {
-            className: 'end-turn-button skip-playback-button',
-            'data-testid': 'skip-playback',
-            onClick: () => {
-              skipPlaybackRef.current = true;
-              setNotice('正在跳过电脑演出…');
-            },
-          }, '跳过演出')
-        : h('button', {
-            className: 'end-turn-button',
-            'data-testid': 'end-turn',
-            disabled: busy || game.status !== 'playing',
-            onClick: endPlayerTurn,
-          }, busy ? '行动演出中…' : '结束回合'),
     ),
     game.status !== 'playing' && !playback && h(
       'div',

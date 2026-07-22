@@ -56,7 +56,7 @@ describe('lightweight browser game contract', () => {
   it('plays AI actions one at a time and announces battle log updates', () => {
     assert.match(appSource, /runAiRoundUntilPlayer/);
     assert.match(appSource, /await delay/);
-    assert.match(appSource, /className: ['"]war-log['"].*'aria-live': ['"]polite['"]/s);
+    assert.match(appSource, /className: ['"][^'"]*war-log[^'"]*['"].*'aria-live': ['"]polite['"]/s);
   });
 
   it('renders readable map playback from canonical city coordinates', () => {
@@ -107,6 +107,24 @@ describe('lightweight browser game contract', () => {
     assert.match(mapSource, /onCancelCommand/);
     assert.match(mapSource, /event\.stopPropagation/);
     assert.match(mapSource, /lockToLegalTargets && !interactionLocked/);
+  });
+
+  it('uses map overlays instead of a fixed command sidebar', () => {
+    assert.match(appSource, /floating-command-panel/);
+    assert.match(appSource, /war-log-overlay/);
+    assert.match(appSource, /--city-left/);
+    assert.match(appSource, /floatingPanelPlacement/);
+    assert.match(appSource, /candidatePlacements/);
+    assert.match(appSource, /targetCities/);
+    assert.match(appSource, /map-bottom-controls/);
+    assert.match(styles, /\.floating-command-panel/);
+    assert.match(styles, /\.war-log-overlay/);
+    assert.match(styles, /\.map-bottom-controls/);
+    assert.match(styles, /grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+    assert.doesNotMatch(styles, /translate\(-50%/);
+    assert.doesNotMatch(appSource, /className: ['"]action-badge['"]/);
+    assert.doesNotMatch(appSource, /className: ['"]command-panel['"]/);
+    assert.doesNotMatch(styles, /\.command-panel/);
   });
 
   it('contains only the approved lightweight rules and copy', () => {
