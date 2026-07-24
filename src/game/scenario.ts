@@ -10,6 +10,7 @@ export interface CityDefinition {
 
 export type ScenarioCityCount = 12 | 18 | 24;
 export type ScenarioDifficulty = 'easy' | 'medium' | 'hard';
+export type ScenarioOpening = ScenarioDifficulty | 'advantaged' | 'fair' | 'underdog';
 
 interface ScenarioDefinition {
   cityDefinitions: CityDefinition[];
@@ -189,7 +190,15 @@ const SCENARIOS: Record<ScenarioCityCount, ScenarioDefinition> = {
   24: { cityDefinitions: CITY_DEFINITIONS_24, routes: ROUTES_24 },
 };
 
-function initialTroops(definition: CityDefinition, playerFaction: FactionId, difficulty: ScenarioDifficulty): number {
+function normalizeOpening(opening: ScenarioOpening): ScenarioDifficulty {
+  if (opening === 'advantaged') return 'easy';
+  if (opening === 'fair') return 'medium';
+  if (opening === 'underdog') return 'hard';
+  return opening;
+}
+
+function initialTroops(definition: CityDefinition, playerFaction: FactionId, opening: ScenarioOpening): number {
+  const difficulty = normalizeOpening(opening);
   if (difficulty === 'medium') return definition.owner === playerFaction ? 3 : 4;
   if (difficulty === 'hard' && definition.owner === playerFaction) {
     return definition.capitalOf ? 3 : 1;
@@ -200,7 +209,7 @@ function initialTroops(definition: CityDefinition, playerFaction: FactionId, dif
 export function createLiteScenario(
   playerFaction: FactionId,
   cityCount: ScenarioCityCount = 12,
-  difficulty: ScenarioDifficulty = 'easy',
+  difficulty: ScenarioOpening = 'easy',
 ): GameState {
   const scenario = SCENARIOS[cityCount] ?? SCENARIOS[12];
   const cities: Record<string, CityState> = {};

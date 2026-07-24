@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "node --no-warnings scripts/build.mjs",
-    "test": "node --no-warnings --experimental-strip-types --test src/game/*.test.ts src/app-contract.test.mjs",
-    "dev": "node --no-warnings scripts/build.mjs && node scripts/serve.mjs"
+    "test": "node --no-warnings --experimental-strip-types --test src/game/*.test.ts src/ai-training/*.test.ts src/app-contract.test.mjs",
+    "dev": "node --no-warnings scripts/build.mjs && node scripts/serve.mjs",
+    "eval:ai": "node --no-warnings --experimental-strip-types scripts/eval-ai.mjs",
+    "train:ga": "node --no-warnings --experimental-strip-types scripts/train-ga.mjs",
+    "train:v2": "node --no-warnings --experimental-strip-types scripts/train-v2.mjs",
+    "eval:trained": "node --no-warnings --experimental-strip-types scripts/eval-trained.mjs"
   }
 }

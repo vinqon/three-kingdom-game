@@ -1,5 +1,5 @@
 import { attack, endFactionTurn, transfer } from './actions.ts';
-import { chooseAiAction, type AiDecision } from './ai.ts';
+import { chooseAiActionForLevel, type AiDecision, type AiLevel } from './ai.ts';
 import type { FactionId, GameState } from './types.ts';
 
 export interface AiTurnStartEvent {
@@ -40,6 +40,7 @@ function reinforcedCityIds(
 export async function runAiRoundUntilPlayer(
   state: GameState,
   observer: AiRoundObserver = () => {},
+  aiLevel: AiLevel = 'normal',
 ): Promise<GameState> {
   let beforeTurn = state;
   let next = endFactionTurn(state);
@@ -57,7 +58,7 @@ export async function runAiRoundUntilPlayer(
 
     let actionGuard = 0;
     while (next.status === 'playing' && next.actionsRemaining > 0 && actionGuard < 2) {
-      const decision = chooseAiAction(next);
+      const decision = chooseAiActionForLevel(next, aiLevel);
       if (!decision) break;
       const beforeState = next;
       const result = decision.mode === 'attack'

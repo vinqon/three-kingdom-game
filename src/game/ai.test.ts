@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
 import { beginFactionTurn } from './actions.ts';
-import { chooseAiAction, runAiTurn } from './ai.ts';
+import { createHeuristicPolicy, trainedHeuristicWeights } from '../ai-training/heuristic-policy.ts';
+import { chooseAiAction, chooseAiActionForLevel, chooseExpertAiAction, runAiTurn } from './ai.ts';
 import { createLiteScenario } from './scenario.ts';
 
 describe('two-action deterministic AI', () => {
@@ -65,5 +67,46 @@ describe('two-action deterministic AI', () => {
       targetCityId: 'hefei',
       troops: 6,
     });
+  });
+
+  it('selects normal or expert opponent policies explicitly', () => {
+    const state = beginFactionTurn(createLiteScenario('wei', 24));
+    state.turnFaction = 'shu';
+
+    assert.deepEqual(chooseAiActionForLevel(state, 'normal'), chooseAiAction(state));
+    assert.deepEqual(chooseAiActionForLevel(state, 'expert'), chooseExpertAiAction(state));
+  });
+
+  it('runs an expert turn when requested', () => {
+    const state = beginFactionTurn(createLiteScenario('wei', 24));
+    state.turnFaction = 'shu';
+    const expert = runAiTurn(state, 'expert');
+    const normal = runAiTurn(state, 'normal');
+
+    assert.ok(expert.events.length <= 2);
+    assert.equal(expert.state.actionsRemaining, 0);
+    assert.notDeepEqual(expert, normal);
+  });
+
+  it('matches the offline trained v1 policy on representative openings', () => {
+    const v1 = createHeuristicPolicy(trainedHeuristicWeights);
+    for (const cityCount of [12, 18, 24] as const) {
+      for (const playerFaction of ['wei', 'shu', 'wu'] as const) {
+        const state = beginFactionTurn(createLiteScenario(playerFaction, cityCount, 'fair'));
+        for (const turnFaction of ['wei', 'shu', 'wu'] as const) {
+          const current = structuredClone(state);
+          current.turnFaction = turnFaction;
+          assert.deepEqual(chooseExpertAiAction(current), v1.chooseAction(current), `${cityCount}:${playerFaction}:${turnFaction}`);
+        }
+      }
+    }
+  });
+
+  it('routes expert opponent through the shared heuristic runtime instead of a local copy', async () => {
+    const source = await readFile(new URL('./ai.ts', import.meta.url), 'utf8');
+
+    assert.match(source, /createHeuristicPolicy/);
+    assert.doesNotMatch(source, /function expertActionScore/);
+    assert.doesNotMatch(source, /function expertRolloutAction/);
   });
 });

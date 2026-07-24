@@ -1,4 +1,5 @@
 import { attack, legalTargets, transfer } from './actions.js';
+import { createHeuristicPolicy, trainedHeuristicWeights } from './heuristic-policy.js';
 function winningAttacks(state) {
     const candidates = [];
     for (const origin of Object.values(state.cities)){
@@ -92,12 +93,22 @@ export function chooseAiAction(state) {
     const decisiveCapitalAttack = rankedAttacks.find((decision)=>attackScore(state, decision) >= 10_000);
     return decisiveCapitalAttack ?? threatenedCapitalTransfer(state) ?? rankedAttacks[0] ?? frontlineTransfer(state);
 }
-export function runAiTurn(state) {
+const expertV1Policy = createHeuristicPolicy(trainedHeuristicWeights, {
+    name: 'baseline-rollout',
+    chooseAction: chooseAiAction
+});
+export function chooseExpertAiAction(state) {
+    return expertV1Policy.chooseAction(state);
+}
+export function chooseAiActionForLevel(state, level) {
+    return level === 'expert' ? chooseExpertAiAction(state) : chooseAiAction(state);
+}
+export function runAiTurn(state, level = 'normal') {
     let next = structuredClone(state);
     const initialLogLength = next.log.length;
     let guard = 0;
     while(next.status === 'playing' && next.actionsRemaining > 0 && guard < 2){
-        const decision = chooseAiAction(next);
+        const decision = chooseAiActionForLevel(next, level);
         if (!decision) break;
         next = decision.mode === 'attack' ? attack(next, decision).state : transfer(next, decision).state;
         guard += 1;

@@ -1,0 +1,78 @@
+{
+  "result": {
+    "bestWeights": {
+      "cityGain": 14.997617055661976,
+      "troopGain": 2.637179389409721,
+      "ownCityRatio": 9.124399782158434,
+      "ownTroopRatio": 5.99750023689121,
+      "capitalControlProgress": 24,
+      "winningMove": 121.1831135155633,
+      "targetCapital": 39.59948595892638,
+      "capturableTarget": 26.730566536821424,
+      "ownCapitalThreat": -39.00763115230948,
+      "ownCapitalSafety": 12,
+      "enemyNearVictory": -29.194038463942707,
+      "strongestEnemyCityRatio": -10,
+      "strongestEnemyTroopRatio": -8,
+      "targetOwnerNearVictory": 18,
+      "distanceToEnemyCapital": 7.803161346726119,
+      "frontlineReinforcement": 15.871471784450113,
+      "frontlineTroopRatio": 7,
+      "originExposure": -12.655970902182162,
+      "capturedCityExposure": -10,
+      "capturedCityRecaptureRisk": -18,
+      "overkillPenalty": -5,
+      "actionEfficiency": 7.308286056108773
+    },
+    "bestFitness": -602.25,
+    "generations": [
+      {
+        "generation": 0,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 1,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 2,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 3,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 4,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 5,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 6,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      },
+      {
+        "generation": 7,
+        "bestFitness": -602.25,
+        "averageFitness": -602.25
+      }
+    ]
+  },
+  "finalEvaluation": {
+    "games": 3,
+    "wins": 0,
+    "losses": 0,
+    "draws": 3,
+    "winRate": 0
+  }
+}

@@ -1,12 +1,10 @@
 import { attack, legalTargets, transfer } from './actions.ts';
-import type {
-  ActionMode,
-  GameLogEntry,
-  GameState,
-  MoveCommand,
-} from './types.ts';
+import { createHeuristicPolicy, trainedHeuristicWeights } from './heuristic-policy.ts';
+import type { AiDecision } from './policies.ts';
+import type { GameLogEntry, GameState } from './types.ts';
 
-export type AiDecision = { mode: ActionMode } & MoveCommand;
+export type { AiDecision };
+export type AiLevel = 'normal' | 'expert';
 
 function winningAttacks(state: GameState): AiDecision[] {
   const candidates: AiDecision[] = [];
@@ -125,12 +123,25 @@ export function chooseAiAction(state: GameState): AiDecision | undefined {
     ?? frontlineTransfer(state);
 }
 
-export function runAiTurn(state: GameState): { state: GameState; events: GameLogEntry[] } {
+const expertV1Policy = createHeuristicPolicy(trainedHeuristicWeights, {
+  name: 'baseline-rollout',
+  chooseAction: chooseAiAction,
+});
+
+export function chooseExpertAiAction(state: GameState): AiDecision | undefined {
+  return expertV1Policy.chooseAction(state);
+}
+
+export function chooseAiActionForLevel(state: GameState, level: AiLevel): AiDecision | undefined {
+  return level === 'expert' ? chooseExpertAiAction(state) : chooseAiAction(state);
+}
+
+export function runAiTurn(state: GameState, level: AiLevel = 'normal'): { state: GameState; events: GameLogEntry[] } {
   let next = structuredClone(state);
   const initialLogLength = next.log.length;
   let guard = 0;
   while (next.status === 'playing' && next.actionsRemaining > 0 && guard < 2) {
-    const decision = chooseAiAction(next);
+    const decision = chooseAiActionForLevel(next, level);
     if (!decision) break;
     next = decision.mode === 'attack' ? attack(next, decision).state : transfer(next, decision).state;
     guard += 1;

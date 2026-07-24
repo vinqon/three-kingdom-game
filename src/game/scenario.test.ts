@@ -96,6 +96,23 @@ describe('twelve-city scenario', () => {
     assert.equal(hard.cities.wan.troops, 3);
   });
 
+  it('applies named opening positions for product setup', () => {
+    const advantaged = beginFactionTurn(createLiteScenario('shu', 12, 'advantaged'));
+    assert.equal(advantaged.cities.chengdu.troops, 6);
+    assert.equal(advantaged.cities.hanzhong.troops, 4);
+    assert.equal(advantaged.cities.xuchang.troops, 5);
+    assert.equal(advantaged.cities.wan.troops, 3);
+
+    const fair = beginFactionTurn(createLiteScenario('shu', 12, 'fair'));
+    assert.ok(Object.values(fair.cities).every((city) => city.troops === 4));
+
+    const underdog = beginFactionTurn(createLiteScenario('shu', 12, 'underdog'));
+    assert.equal(underdog.cities.chengdu.troops, 4);
+    assert.equal(underdog.cities.hanzhong.troops, 2);
+    assert.equal(underdog.cities.xuchang.troops, 5);
+    assert.equal(underdog.cities.wan.troops, 3);
+  });
+
   it('creates selectable eighteen and twenty-four city campaigns with clustered sparse roads', () => {
     for (const [cityCount, perFaction] of [[18, 6], [24, 8]] as const) {
       const state = createLiteScenario('wei', cityCount);

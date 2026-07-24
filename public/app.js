@@ -31,10 +31,15 @@ const MAP_SIZES = [
   { count: 24, name: '二十四城', detail: '每国 8 城 · 战区完整' },
 ];
 
-const DIFFICULTIES = [
-  { id: 'easy', name: '简单', detail: '强国开局：玩家首都 6、普通城 4' },
-  { id: 'medium', name: '中等', detail: '均势开局：三方每座城市都是 4 兵' },
-  { id: 'hard', name: '困难', detail: '弱国开局：玩家首都 4、普通城 2' },
+const OPENING_SCENARIOS = [
+  { id: 'underdog', name: '以少胜多', detail: '弱势开局：玩家首都 4、普通城 2' },
+  { id: 'fair', name: '公平局面', detail: '均势开局：三方每座城市都是 4 兵' },
+  { id: 'advantaged', name: '以多胜少', detail: '优势开局：玩家首都 6、普通城 4' },
+];
+
+const OPPONENT_LEVELS = [
+  { id: 'normal', name: '普通对手', detail: '使用原始确定性策略。' },
+  { id: 'expert', name: '专家对手', detail: '使用离线训练得到的 V1 策略。' },
 ];
 
 const ERROR_COPY = {
@@ -88,9 +93,11 @@ function Welcome({ onStart }) {
 function FactionSelect({ onConfirm, onBack }) {
   const [selected, setSelected] = useState('wei');
   const [selectedSize, setSelectedSize] = useState(12);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('easy');
+  const [selectedOpening, setSelectedOpening] = useState('fair');
+  const [selectedOpponent, setSelectedOpponent] = useState('normal');
   const mapSize = MAP_SIZES.find((size) => size.count === selectedSize);
-  const difficulty = DIFFICULTIES.find((item) => item.id === selectedDifficulty);
+  const opening = OPENING_SCENARIOS.find((item) => item.id === selectedOpening);
+  const opponent = OPPONENT_LEVELS.find((item) => item.id === selectedOpponent);
   return h(
     'main',
     { className: 'faction-screen' },
@@ -99,7 +106,7 @@ function FactionSelect({ onConfirm, onBack }) {
       { className: 'faction-select-card' },
       h('p', { className: 'eyebrow' }, '开局设置'),
       h('h1', null, '选择战局与势力'),
-      h('p', { className: 'screen-intro' }, `${mapSize.name} · ${difficulty.name}。三方规则完全相同，难度只影响初始兵力。`),
+      h('p', { className: 'screen-intro' }, `${mapSize.name} · ${opening.name} · ${opponent.name}。局面决定开局兵力，对手决定电脑策略。`),
       h('div', { className: 'section-title' }, '势力'),
       h(
         'div',
@@ -145,21 +152,43 @@ function FactionSelect({ onConfirm, onBack }) {
       h(
         'section',
         { className: 'setup-section' },
-        h('div', { className: 'section-title' }, '难度'),
+        h('div', { className: 'section-title' }, '局面'),
         h(
           'div',
-          { className: 'difficulty-grid setup-option-grid', role: 'group', 'aria-label': '选择难度' },
-          ...DIFFICULTIES.map((difficulty) =>
+          { className: 'difficulty-grid setup-option-grid', role: 'group', 'aria-label': '选择开局局面' },
+          ...OPENING_SCENARIOS.map((opening) =>
             h(
               'button',
               {
-                key: difficulty.id,
-                className: `difficulty-button${selectedDifficulty === difficulty.id ? ' selected' : ''}`,
-                'data-testid': `difficulty-${difficulty.id}`,
-                onClick: () => setSelectedDifficulty(difficulty.id),
+                key: opening.id,
+                className: `difficulty-button${selectedOpening === opening.id ? ' selected' : ''}`,
+                'data-testid': `opening-${opening.id}`,
+                onClick: () => setSelectedOpening(opening.id),
               },
-              h('strong', null, difficulty.name),
-              h('small', null, difficulty.detail),
+              h('strong', null, opening.name),
+              h('small', null, opening.detail),
+            ),
+          ),
+        ),
+      ),
+      h(
+        'section',
+        { className: 'setup-section' },
+        h('div', { className: 'section-title' }, '对手'),
+        h(
+          'div',
+          { className: 'difficulty-grid setup-option-grid', role: 'group', 'aria-label': '选择电脑对手' },
+          ...OPPONENT_LEVELS.map((opponent) =>
+            h(
+              'button',
+              {
+                key: opponent.id,
+                className: `difficulty-button${selectedOpponent === opponent.id ? ' selected' : ''}`,
+                'data-testid': `opponent-${opponent.id}`,
+                onClick: () => setSelectedOpponent(opponent.id),
+              },
+              h('strong', null, opponent.name),
+              h('small', null, opponent.detail),
             ),
           ),
         ),
@@ -171,7 +200,7 @@ function FactionSelect({ onConfirm, onBack }) {
         h('button', {
           className: 'primary-button',
           'data-testid': 'confirm-faction',
-          onClick: () => onConfirm(selected, selectedSize, selectedDifficulty),
+          onClick: () => onConfirm(selected, selectedSize, selectedOpening, selectedOpponent),
         }, `以${FACTIONS[selected].name}开局`),
       ),
     ),
@@ -215,8 +244,8 @@ function ActionPreview({ state, command, mode, onConfirm, onCancel }) {
   );
 }
 
-function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
-  const [game, setGame] = useState(() => beginFactionTurn(createLiteScenario(initialFaction, cityCount, difficulty)));
+function GameApp({ initialFaction, cityCount, opening, aiLevel, onExit }) {
+  const [game, setGame] = useState(() => beginFactionTurn(createLiteScenario(initialFaction, cityCount, opening)));
   const [selectedCityId, setSelectedCityId] = useState(capitalId(initialFaction));
   const [mode, setMode] = useState(null);
   const [targetCityId, setTargetCityId] = useState(null);
@@ -378,7 +407,7 @@ function GameApp({ initialFaction, cityCount, difficulty, onExit }) {
           event.decision,
           'ai',
         );
-      });
+      }, aiLevel);
       setGame(next);
       const home = Object.values(next.cities).find((city) => city.capitalOf === next.playerFaction && city.owner === next.playerFaction)
         ?? Object.values(next.cities).find((city) => city.owner === next.playerFaction);
@@ -548,18 +577,20 @@ export function App() {
   const [screen, setScreen] = useState('welcome');
   const [faction, setFaction] = useState('wei');
   const [cityCount, setCityCount] = useState(12);
-  const [difficulty, setDifficulty] = useState('easy');
+  const [opening, setOpening] = useState('fair');
+  const [aiLevel, setAiLevel] = useState('normal');
   if (screen === 'welcome') return h(Welcome, { onStart: () => setScreen('faction') });
   if (screen === 'faction') return h(FactionSelect, {
     onBack: () => setScreen('welcome'),
-    onConfirm: (selected, selectedCityCount, selectedDifficulty) => {
+    onConfirm: (selected, selectedCityCount, selectedOpening, selectedOpponent) => {
       setFaction(selected);
       setCityCount(selectedCityCount);
-      setDifficulty(selectedDifficulty);
+      setOpening(selectedOpening);
+      setAiLevel(selectedOpponent);
       setScreen('game');
     },
   });
-  return h(GameApp, { key: `${faction}-${cityCount}-${difficulty}`, initialFaction: faction, cityCount, difficulty, onExit: () => setScreen('welcome') });
+  return h(GameApp, { key: `${faction}-${cityCount}-${opening}-${aiLevel}`, initialFaction: faction, cityCount, opening, aiLevel, onExit: () => setScreen('welcome') });
 }
 
 if (typeof document !== 'undefined') {

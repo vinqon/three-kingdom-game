@@ -6,6 +6,7 @@ const appSource = await readFile(new URL('../public/app.js', import.meta.url), '
 const mapSource = await readFile(new URL('../public/map-canvas.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../public/styles.css', import.meta.url), 'utf8');
+const heuristicPolicySource = await readFile(new URL('../public/game/heuristic-policy.js', import.meta.url), 'utf8');
 
 describe('lightweight browser game contract', () => {
   it('exposes the complete lightweight interaction path', () => {
@@ -31,11 +32,15 @@ describe('lightweight browser game contract', () => {
     assert.match(appSource, /count:\s*18/);
     assert.match(appSource, /count:\s*24/);
     assert.match(appSource, /`map-size-\$\{size\.count\}`/);
-    assert.match(appSource, /id:\s*['"]easy['"]/);
-    assert.match(appSource, /id:\s*['"]medium['"]/);
-    assert.match(appSource, /id:\s*['"]hard['"]/);
-    assert.match(appSource, /`difficulty-\$\{difficulty\.id\}`/);
-    assert.match(appSource, /createLiteScenario\(initialFaction,\s*cityCount,\s*difficulty\)/);
+    assert.match(appSource, /id:\s*['"]advantaged['"]/);
+    assert.match(appSource, /id:\s*['"]fair['"]/);
+    assert.match(appSource, /id:\s*['"]underdog['"]/);
+    assert.match(appSource, /id:\s*['"]normal['"]/);
+    assert.match(appSource, /id:\s*['"]expert['"]/);
+    assert.match(appSource, /`opening-\$\{opening\.id\}`/);
+    assert.match(appSource, /`opponent-\$\{opponent\.id\}`/);
+    assert.match(appSource, /createLiteScenario\(initialFaction,\s*cityCount,\s*opening\)/);
+    assert.match(appSource, /runAiRoundUntilPlayer\(game,[\s\S]*aiLevel/);
     assert.match(appSource, /wei:|shu:|wu:/);
     assert.match(mapSource, /['"]game-map['"]/);
     assert.match(mapSource, /`city-\$\{city\.id\}`/);
@@ -150,9 +155,24 @@ describe('lightweight browser game contract', () => {
     assert.doesNotMatch(appSource, /粮草|城防|武将|修城|征兵|军师|猛将|守将/);
   });
 
-  it('publishes only the six lightweight game modules', async () => {
+  it('publishes only the approved lightweight game modules', async () => {
     const modules = (await readdir(new URL('../public/game/', import.meta.url))).sort();
-    assert.deepEqual(modules, ['actions.js', 'ai-round.js', 'ai.js', 'playback.js', 'scenario.js', 'types.js']);
+    assert.deepEqual(modules, [
+      'actions.js',
+      'ai-round.js',
+      'ai.js',
+      'heuristic-policy.js',
+      'playback.js',
+      'policies.js',
+      'scenario.js',
+      'types.js',
+    ]);
+  });
+
+  it('keeps advanced training policies out of the browser runtime', () => {
+    assert.doesNotMatch(heuristicPolicySource, /createV2Policy/);
+    assert.doesNotMatch(heuristicPolicySource, /capitalCaptureSetupAction/);
+    assert.doesNotMatch(heuristicPolicySource, /suppressStrongestEnemyAction/);
   });
 
   it('is self-contained, mobile ready, and importable after build', async () => {
