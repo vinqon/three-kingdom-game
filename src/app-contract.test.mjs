@@ -120,6 +120,8 @@ describe('lightweight browser game contract', () => {
     assert.match(styles, /@media \(min-width:\s*621px\) and \(max-width:\s*1180px\)/);
     assert.doesNotMatch(styles, /\.faction-select-card[^{]*{[^}]*overflow-y:\s*auto/s);
     assert.doesNotMatch(styles, /\.screen-actions[^{]*{[^}]*position:\s*sticky/s);
+    assert.doesNotMatch(styles, /@media \(min-width:\s*621px\) and \(max-width:\s*1180px\)[\s\S]*?\.faction-screen[^{]*{[^}]*align-items:\s*start/s);
+    assert.match(styles, /\.faction-select-card[^{]*{[^}]*width:\s*min\(860px,\s*90vw\)/s);
     assert.match(styles, /@media \(max-width:\s*620px\)[\s\S]*?\.faction-grid[^{]*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
     assert.match(styles, /@media \(max-width:\s*620px\)[\s\S]*?\.map-size-grid,\s*\.difficulty-grid[^{]*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
     assert.match(styles, /@media \(max-height:\s*520px\)/);
