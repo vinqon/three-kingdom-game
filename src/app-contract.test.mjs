@@ -118,7 +118,9 @@ describe('lightweight browser game contract', () => {
     assert.match(styles, /\.faction-screen[^{]*{[^}]*overflow-y:\s*auto/s);
     assert.match(styles, /-webkit-overflow-scrolling:\s*touch/);
     assert.match(styles, /@media \(min-width:\s*621px\) and \(max-width:\s*1180px\)/);
-    assert.match(styles, /\.faction-select-card[^{]*{[^}]*max-height:\s*none/s);
+    assert.match(styles, /\.faction-select-card[^{]*{[^}]*max-height:\s*calc\(100dvh\s*-\s*36px\)[^}]*overflow-y:\s*auto/s);
+    assert.match(styles, /@media \(max-width:\s*620px\)[\s\S]*?\.faction-grid[^{]*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
+    assert.match(styles, /\.screen-actions[^{]*{[^}]*position:\s*sticky[^}]*bottom:\s*0/s);
   });
 
   it('keeps command actions out of the end-turn footer', () => {
