@@ -114,13 +114,15 @@ describe('lightweight browser game contract', () => {
     assert.match(mapSource, /lockToLegalTargets && !interactionLocked/);
   });
 
-  it('keeps iPad setup screens scrollable and compact', () => {
+  it('keeps setup screens compact without internal scrolling', () => {
     assert.match(styles, /\.faction-screen[^{]*{[^}]*overflow-y:\s*auto/s);
     assert.match(styles, /-webkit-overflow-scrolling:\s*touch/);
     assert.match(styles, /@media \(min-width:\s*621px\) and \(max-width:\s*1180px\)/);
-    assert.match(styles, /\.faction-select-card[^{]*{[^}]*max-height:\s*calc\(100dvh\s*-\s*36px\)[^}]*overflow-y:\s*auto/s);
+    assert.doesNotMatch(styles, /\.faction-select-card[^{]*{[^}]*overflow-y:\s*auto/s);
+    assert.doesNotMatch(styles, /\.screen-actions[^{]*{[^}]*position:\s*sticky/s);
     assert.match(styles, /@media \(max-width:\s*620px\)[\s\S]*?\.faction-grid[^{]*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
-    assert.match(styles, /\.screen-actions[^{]*{[^}]*position:\s*sticky[^}]*bottom:\s*0/s);
+    assert.match(styles, /@media \(max-width:\s*620px\)[\s\S]*?\.map-size-grid,\s*\.difficulty-grid[^{]*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
+    assert.match(styles, /@media \(max-height:\s*520px\)/);
   });
 
   it('keeps command actions out of the end-turn footer', () => {
