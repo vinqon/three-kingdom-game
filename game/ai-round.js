@@ -1,9 +1,9 @@
 import { attack, endFactionTurn, transfer } from './actions.js';
-import { chooseAiAction } from './ai.js';
+import { chooseAiActionForLevel } from './ai.js';
 function reinforcedCityIds(before, after, faction) {
     return Object.values(after.cities).filter((city)=>city.owner === faction && city.troops === before.cities[city.id].troops + 1).map((city)=>city.id).sort();
 }
-export async function runAiRoundUntilPlayer(state, observer = ()=>{}) {
+export async function runAiRoundUntilPlayer(state, observer = ()=>{}, aiLevel = 'normal') {
     let beforeTurn = state;
     let next = endFactionTurn(state);
     let factionGuard = 0;
@@ -18,7 +18,7 @@ export async function runAiRoundUntilPlayer(state, observer = ()=>{}) {
         });
         let actionGuard = 0;
         while(next.status === 'playing' && next.actionsRemaining > 0 && actionGuard < 2){
-            const decision = chooseAiAction(next);
+            const decision = chooseAiActionForLevel(next, aiLevel);
             if (!decision) break;
             const beforeState = next;
             const result = decision.mode === 'attack' ? attack(next, decision) : transfer(next, decision);

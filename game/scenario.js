@@ -836,7 +836,14 @@ const SCENARIOS = {
         routes: ROUTES_24
     }
 };
-function initialTroops(definition, playerFaction, difficulty) {
+function normalizeOpening(opening) {
+    if (opening === 'advantaged') return 'easy';
+    if (opening === 'fair') return 'medium';
+    if (opening === 'underdog') return 'hard';
+    return opening;
+}
+function initialTroops(definition, playerFaction, opening) {
+    const difficulty = normalizeOpening(opening);
     if (difficulty === 'medium') return definition.owner === playerFaction ? 3 : 4;
     if (difficulty === 'hard' && definition.owner === playerFaction) {
         return definition.capitalOf ? 3 : 1;
